@@ -11,6 +11,7 @@ import {
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import Search from "antd/es/input/Search";
 import { showError, showSuccess } from "../../../untils/ShowToast";
+import PageHeader from "../../../components/ui/PageHeader";
 
 interface Product {
   id: string;
@@ -204,17 +205,20 @@ export default function ProductManagement() {
     <div>
       <Flex vertical gap={16}>
         {/* Header */}
-        <Flex align="center" justify="space-between">
-          <h2 style={{ margin: 0 }}>Danh sách sản phẩm</h2>
-          <Search
-            placeholder="Tìm kiếm theo tên, danh mục..."
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onSearch={handleSearch}
-            style={{ width: 350 }}
-            size="large"
-          />
-        </Flex>
+        <PageHeader
+          title="Quản lý sản phẩm"
+          breadcrumbs={[{ title: 'Seller' }, { title: 'Sản phẩm' }]}
+          extra={
+            <Search
+              placeholder="Tìm kiếm theo tên, danh mục..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onSearch={handleSearch}
+              style={{ width: 300 }}
+              allowClear
+            />
+          }
+        />
 
         {/* Filter Section */}
         <Flex

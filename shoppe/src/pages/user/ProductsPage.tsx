@@ -1,136 +1,128 @@
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Spin, Card, Row, Col, Empty, Button, Flex } from 'antd';
-import { getProductsByCategory } from '../../api/product/product.api';
+import { Button, Skeleton } from 'antd';
+import { getAllProduct, getProductsByCategory } from '../../api/product/product.api';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-
-const { Meta } = Card;
+import PageContainer from '../../components/ui/PageContainer';
+import PageHeader from '../../components/ui/PageHeader';
+import ProductCard from '../../components/ui/ProductCard';
+import EmptyState from '../../components/ui/EmptyState';
+import '../../css/ProductCard.css';
 
 function ProductsPage() {
-    const [searchParams] = useSearchParams();
-    const categoryId = searchParams.get('category');
-    const [products, setProducts] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const fetchProducts = async () => {
-        if (!categoryId) return;
-        setLoading(true);
-        try {
-            const body = {
-                pageInfo: {
-                    page: 1,
-                    pageSize: 20,
-                },
-                keyWord: '',
-                filter: {},
-                sorts: {},
-            };
+  const [searchParams] = useSearchParams();
+  const categoryId = searchParams.get('category');
+  const keyword = searchParams.get('keyword')?.trim() ?? '';
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-            const res: any = await getProductsByCategory(categoryId, body);
-            if (res?.success && Array.isArray(res.data)) {
-                setProducts(res.data);
-            } else {
-                setProducts([]);
-            }
-        } catch (error) {
-            console.error('Lỗi khi tải sản phẩm:', error);
-        } finally {
-            setLoading(false);
+  const pageTitle = keyword
+    ? `Kết quả tìm kiếm: "${keyword}"`
+    : products[0]?.categoryName
+      ? String(products[0].categoryName)
+      : 'Sản phẩm';
+
+  const fetchProducts = useCallback(async () => {
+    if (!categoryId && !keyword) {
+      setProducts([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const body = {
+        pageInfo: { page: 1, pageSize: 20 },
+        keyWord: keyword,
+        filter: {},
+        sorts: {},
+      };
+
+      let data: any[] = [];
+
+      if (categoryId) {
+        const res = await getProductsByCategory(categoryId, body);
+        const typed = res as { success?: boolean; data?: any[] };
+        if (typed?.success && Array.isArray(typed.data)) {
+          data = typed.data;
         }
-    };
+      } else {
+        const res = await getAllProduct(body);
+        const typed = res as { success?: boolean; data?: any[] };
+        if (typed?.success && Array.isArray(typed.data)) {
+          data = typed.data.filter(
+            (p) =>
+              (p as { isActive?: boolean }).isActive !== false &&
+              (p as { sellerStatus?: boolean }).sellerStatus !== false
+          );
+        }
+      }
 
+      setProducts(data);
+    } catch (error) {
+      console.error('Lỗi khi tải sản phẩm:', error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [categoryId, keyword]);
 
-    useEffect(() => {
-        fetchProducts();
-    }, [categoryId]);
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
-    return (
-        <div style={{ padding: '24px' }}>
-            <div style={{ display: "flex", alignItems: "center", marginBottom: 10, marginLeft: '-2px' }}>
-                <Button
-                    type="text"
-                    icon={<ArrowLeftOutlined />}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                        color: "#555",
-                        fontWeight: 500,
-                    }}
-                    onClick={() => navigate('/user')}
-                >
-                    Quay lại
-                </Button>
-            </div>
-            {/* <h2>Danh sách sản phẩm</h2> */}
-            {loading ? (
-                <Spin />
-            ) : products.length === 0 ? (
-                <Empty description="Không có sản phẩm nào trong danh mục này" />
-            ) : (
+  const emptyDescription = keyword
+    ? `Không tìm thấy sản phẩm cho "${keyword}"`
+    : 'Không có sản phẩm nào trong danh mục này';
 
-                <>
-                    {products.length > 0 && (
-                        <Flex style={{ marginBottom: 16 }} justify="center" >
-                            <p style={{ fontSize: 30, fontWeight: 600 }}>
-                                Danh sách sản phẩm của {products[0]?.categoryName}
-                            </p>
-                        </Flex>
-                    )}
+  return (
+    <PageContainer>
+      <PageHeader
+        title={loading && products.length === 0 ? 'Đang tải...' : pageTitle}
+        breadcrumbs={[
+          { title: 'Trang chủ', href: '/user' },
+          { title: keyword ? 'Tìm kiếm' : 'Danh mục' },
+        ]}
+        extra={
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate('/user')}
+          >
+            Quay lại
+          </Button>
+        }
+      />
 
-                    <Row gutter={[16, 16]}>
-                        {products.map((product) => (
-                            <Col xs={12} sm={8} md={8} lg={4} key={product.id}>
-                                <Card
-                                    hoverable
-                                    cover={
-                                        <img
-                                            alt={product.name}
-                                            src={product.thumbnail || '/no-image.png'}
-                                            style={{ height: 200, objectFit: "contain" }}
-                                        />
-                                    }
-                                    onClick={() => navigate(`/user/products/${product.id}`)}
-                                >
-                                    <Meta
-                                        title={
-                                            <div
-                                                style={{
-                                                    fontWeight: 600,
-                                                    fontSize: 14,
-                                                    color: "#111",
-                                                    lineHeight: "20px",
-                                                    overflow: "hidden",
-                                                    display: "-webkit-box",
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: "vertical",
-                                                }}
-                                            >
-                                                {product.productName}
-                                            </div>
-                                        }
-                                        description={
-                                            <div
-                                                style={{
-                                                    marginTop: 6,
-                                                    fontSize: 16,
-                                                    fontWeight: 700,
-                                                    color: "#d0011b",
-                                                }}
-                                            >
-                                                {product.price.toLocaleString()} đ
-                                            </div>
-                                        }
-                                    />
-                                </Card>
-                            </Col>
-                        ))}
-                    </Row>
-                </>
-
-            )}
+      {loading ? (
+        <div className="product-grid-skeleton">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton.Image key={i} active style={{ width: '100%', height: 200 }} />
+          ))}
         </div>
-    );
+      ) : products.length === 0 ? (
+        <EmptyState
+          description={
+            !categoryId && !keyword
+              ? 'Chọn danh mục hoặc tìm kiếm sản phẩm'
+              : emptyDescription
+          }
+          actionLabel="Xem trang chủ"
+          onAction={() => navigate('/user')}
+        />
+      ) : (
+        <div className="product-grid">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onClick={(id) => navigate(`/user/products/${id}`)}
+            />
+          ))}
+        </div>
+      )}
+    </PageContainer>
+  );
 }
 
 export default ProductsPage;

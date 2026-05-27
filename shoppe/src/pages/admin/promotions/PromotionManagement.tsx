@@ -11,6 +11,7 @@ import {
 import CustomTable from "../../../components/CustomTable";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import { showError, showSuccess } from "../../../untils/ShowToast";
+import PageHeader from "../../../components/ui/PageHeader";
 
 interface Promotion {
   id: string;
@@ -165,24 +166,20 @@ export default function PromotionManagement() {
 
   return (
     <div>
-      <Flex align="center" justify="space-between" style={{ marginBottom: 16 }}>
-        <h2>Danh sách khuyến mãi</h2>
-        {/* <Search
-          placeholder="Tìm kiếm theo mã hoặc mô tả..."
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          style={{ width: 300 }}
-          allowClear
-        /> */}
-        <Search
-          placeholder="Tìm kiếm theo tên, email..."
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          onSearch={handleSearch}
-          style={{ marginBottom: 16, width: 300 }}
-          allowClear
-        />
-      </Flex>
+      <PageHeader
+        title="Quản lý khuyến mãi"
+        breadcrumbs={[{ title: 'Admin' }, { title: 'Khuyến mãi' }]}
+        extra={
+          <Search
+            placeholder="Tìm kiếm mã, mô tả..."
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onSearch={handleSearch}
+            style={{ width: 280 }}
+            allowClear
+          />
+        }
+      />
 
       {loading ? (
         <LoadingDefault />

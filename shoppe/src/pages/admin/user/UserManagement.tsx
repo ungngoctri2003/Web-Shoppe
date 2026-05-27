@@ -7,6 +7,7 @@ import { deleteSeller } from "../../../api/seller/seller.api";
 import { showError, showSuccess, showWarning } from "../../../untils/ShowToast";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import Search from "antd/es/input/Search";
+import PageHeader from "../../../components/ui/PageHeader";
 import { getAllUser } from "../../../api/user.api";
 import { ToggleLock } from "../../../api/auth.api";
 
@@ -131,16 +132,20 @@ export default function UserManagement() {
 
   return (
     <div>
-      <Flex align="center" justify="space-between" style={{ marginBottom: 16 }}>
-        <h2>Danh sách người dùng</h2>
-        <Search
-          placeholder="Tìm kiếm theo tên, email..."
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={handleSearch}
-          style={{ marginBottom: 16, width: 300 }}
-        />
-      </Flex>
+      <PageHeader
+        title="Quản lý người dùng"
+        breadcrumbs={[{ title: 'Admin' }, { title: 'Người dùng' }]}
+        extra={
+          <Search
+            placeholder="Tìm kiếm theo tên, email..."
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onSearch={handleSearch}
+            style={{ width: 280 }}
+            allowClear
+          />
+        }
+      />
       {loading ? (
         <LoadingDefault />
       ) : (

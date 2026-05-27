@@ -22,7 +22,10 @@ import AddressManagement from "./AddressManagement";
 import { formatCurrency } from "../../untils/FormatPrice";
 import VoucherModal from "./VoucherModal";
 import { ArrowLeftOutlined, BarcodeOutlined, CloseOutlined } from "@ant-design/icons";
-import { COLOR_DEFAULT } from "../../constants/Color";
+import PageContainer from "../../components/ui/PageContainer";
+import PageHeader from "../../components/ui/PageHeader";
+import CheckoutSteps from "../../components/ui/CheckoutSteps";
+import "../../css/pages/CheckoutPage.css";
 
 const { Text, Title } = Typography;
 
@@ -258,37 +261,43 @@ const OrderDetail = () => {
 
     if (loading && !order) {
         return (
-            <div style={{ textAlign: "center", padding: 50 }}>
-                <Spin size="large" />
-            </div>
+            <PageContainer style={{ textAlign: "center", padding: 48 }}>
+                <Spin size="large" tip="Đang tải đơn hàng..." />
+            </PageContainer>
         );
     }
 
-    return (
-        <div style={{ padding: "24px 16px", maxWidth: "80%", margin: "0 auto" }}>
-            <div style={{ display: "flex", alignItems: "center", marginBottom: 10 }}>
-                <Button
-                    type="text"
-                    icon={<ArrowLeftOutlined />}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                        color: "#555",
-                        fontWeight: 500,
-                    }}
-                    onClick={() => navigate('/user')}
-                >
-                    Quay lại
-                </Button>
-            </div>
+    const isCheckout = !orderId;
 
-            <Card
-                style={{ borderRadius: 12, boxShadow: "0 8px 24px rgba(0,0,0,0.12)" }}
-                bodyStyle={{ padding: 24 }}
-            >
+    return (
+        <PageContainer className="page-container--narrow">
+        <div className="checkout-page">
+            <PageHeader
+                title={isCheckout ? 'Xác nhận đơn hàng' : 'Chi tiết đơn hàng'}
+                breadcrumbs={[
+                    { title: 'Trang chủ', href: '/user' },
+                    isCheckout
+                        ? { title: 'Giỏ hàng', href: '/user/cart' }
+                        : { title: 'Đơn mua', href: '/user/orderstatus' },
+                    { title: isCheckout ? 'Thanh toán' : 'Chi tiết' },
+                ]}
+                extra={
+                    <Button
+                        type="text"
+                        icon={<ArrowLeftOutlined />}
+                        onClick={() => navigate(isCheckout ? '/user/cart' : '/user/orderstatus')}
+                    >
+                        Quay lại
+                    </Button>
+                }
+            />
+            <CheckoutSteps current={isCheckout ? 1 : 2} />
+
+            <div className="checkout-page__layout">
+            <div className="checkout-page__main">
+            <Card className="checkout-page__card" styles={{ body: { padding: 24 } }}>
                 {/* Địa chỉ giao hàng */}
-                <Card type="inner" title="Địa chỉ giao hàng" style={{ marginBottom: 16 }}>
+                <Card type="inner" title="Địa chỉ giao hàng" className="checkout-page__address-card">
                     {orderAddress ? (
                         <>
                             <div style={{ marginBottom: 4 }}>
@@ -297,7 +306,7 @@ const OrderDetail = () => {
                                 </Text>
                             </div>
                             <Flex gap={16} justify="space-between" align="center">
-                                <div style={{ marginBottom: 8, color: "rgba(0,0,0,0.75)" }}>
+                                <div className="checkout-page__address-text">
                                     {orderAddress.addressDetail}
                                     {orderAddress.city ? `, ${orderAddress.city}` : ""}
                                     {orderAddress.province ? `, ${orderAddress.province}` : ""}
@@ -338,24 +347,18 @@ const OrderDetail = () => {
                 {order?.orderItems?.map((item, idx) => (
                     <Card
                         key={item.id || idx}
-                        hoverable
-                        style={{ marginBottom: 16, borderRadius: 10 }}
-                        bodyStyle={{ padding: 16 }}
+                        className="checkout-page__product-card"
+                        styles={{ body: { padding: 16 } }}
                     >
                         <Row gutter={16} align="middle">
-                            <Col span={6}>
+                            <Col xs={8} sm={6}>
                                 <img
                                     src={item.thumbnail}
                                     alt={item.productName}
-                                    style={{
-                                        width: 100,
-                                        height: 100,
-                                        objectFit: "cover",
-                                        borderRadius: 8,
-                                    }}
+                                    className="checkout-page__product-img"
                                 />
                             </Col>
-                            <Col span={12}>
+                            <Col xs={16} sm={12}>
                                 <Title level={5}>{item.productName || "Tên sản phẩm"}</Title>
                                 <Text type="secondary">Số lượng: {item.quantity}</Text>
                                 {item.variantName && (
@@ -366,8 +369,8 @@ const OrderDetail = () => {
                                     </div>
                                 )}
                             </Col>
-                            <Col span={6} style={{ textAlign: "right" }}>
-                                <Title level={5} style={{ color: "#fa541c" }}>
+                            <Col xs={24} sm={6} style={{ textAlign: "right" }}>
+                                <Title level={5} className="checkout-page__product-price">
                                     {formatCurrency(item.price)}
                                 </Title>
                             </Col>
@@ -377,75 +380,66 @@ const OrderDetail = () => {
 
                 <Divider />
 
-               {/* Voucher */}
-<Row style={{ marginBottom: 16 }}>
-  <Col span={24}>
-    <Flex justify="space-between" align="center">
-      <Flex align="center">
-        <BarcodeOutlined style={{ fontSize: "23px", color: COLOR_DEFAULT }} />
-        <Text style={{ marginLeft: 8, fontSize: "16px" }}>Shopping Voucher</Text>
-      </Flex>
-
-      {selectedVoucher ? (
-        // ✅ Nếu đã chọn voucher: hiển thị box + cho phép bấm để bỏ chọn
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            backgroundColor: "#e6f7ff",
-            border: "1px dashed #1890ff",
-            borderRadius: 6,
-            padding: "4px 10px",
-            cursor: "pointer",
-            gap: 8,
-          }}
-          onClick={() => handleApplyVoucher(null)}
-        >
-          <BarcodeOutlined style={{ color: "#1890ff" }} />
-          <span style={{ color: "#1890ff", fontWeight: 600 }}>
-            {selectedVoucher.code ||
-              `Giảm ${selectedVoucher.discountPercent}%`}
-          </span>
-          <CloseOutlined style={{ color: "#1890ff", fontWeight: 600 }} />
-        </div>
-      ) : (
-        // ✅ Nếu chưa chọn voucher: chỉ hiển thị 1 nút link duy nhất
-        <Button
-          type="link"
-          onClick={() => setIsVoucherModalOpen(true)}
-          style={{ color: "#20609bff", fontWeight: 500 }}
-        >
-          Chọn voucher
-        </Button>
-      )}
-    </Flex>
-  </Col>
-</Row>
-
-
-                {/* Tổng tiền + Thanh toán */}
-                <Row justify="space-between" align="middle">
-                    <Col></Col>
-                    <Col style={{ textAlign: "right" }}>
-                        <Title level={3} style={{ color: "#1890ff" }}>
-                            Tổng: {formatCurrency(order?.totalAmount || 0)}
-                        </Title>
-                        {order?.paymentMethod && (
-                            <Text type="secondary">Thanh toán: {order.paymentMethod}</Text>
-                        )}
-                        <div style={{ marginTop: 16 }}>
-                            <Button
-                                type="primary"
-                                size="large"
-                                onClick={handlePayment}
-                                loading={loading}
-                            >
-                                Thanh toán
-                            </Button>
-                        </div>
+                <Row className="checkout-page__voucher-row">
+                    <Col span={24}>
+                        <Flex justify="space-between" align="center" wrap="wrap" gap={8}>
+                            <Flex align="center">
+                                <BarcodeOutlined style={{ fontSize: 23, color: 'var(--color-primary-500)' }} />
+                                <Text style={{ marginLeft: 8, fontSize: 16 }}>Shopping Voucher</Text>
+                            </Flex>
+                            {selectedVoucher ? (
+                                <div
+                                    className="checkout-page__voucher-chip"
+                                    onClick={() => handleApplyVoucher(null)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            handleApplyVoucher(null);
+                                        }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                >
+                                    <BarcodeOutlined className="checkout-page__voucher-chip-icon" />
+                                    <span>
+                                        {selectedVoucher.code ||
+                                            `Giảm ${selectedVoucher.discountPercent}%`}
+                                    </span>
+                                    <CloseOutlined />
+                                </div>
+                            ) : (
+                                <Button type="link" onClick={() => setIsVoucherModalOpen(true)}>
+                                    Chọn voucher
+                                </Button>
+                            )}
+                        </Flex>
                     </Col>
                 </Row>
             </Card>
+            </div>
+
+            <aside className="checkout-page__summary">
+                <Card className="checkout-page__summary-card" styles={{ body: { padding: 24 } }}>
+                    <Title level={4}>Tóm tắt đơn hàng</Title>
+                    <Divider />
+                    <Title level={3} className="checkout-page__total">
+                        Tổng: {formatCurrency(order?.totalAmount || 0)}
+                    </Title>
+                    {order?.paymentMethod && (
+                        <Text type="secondary">Thanh toán: {order.paymentMethod}</Text>
+                    )}
+                    <Button
+                        type="primary"
+                        size="large"
+                        className="checkout-page__pay-btn"
+                        onClick={handlePayment}
+                        loading={loading}
+                    >
+                        Thanh toán
+                    </Button>
+                </Card>
+            </aside>
+            </div>
 
             {/* Modal quản lý địa chỉ */}
             <AddressManagement
@@ -464,6 +458,7 @@ const OrderDetail = () => {
                 cartTotal={cartTotal}
             />
         </div>
+        </PageContainer>
     );
 };
 

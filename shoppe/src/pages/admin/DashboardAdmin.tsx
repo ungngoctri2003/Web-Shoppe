@@ -1,6 +1,6 @@
 // src/pages/admin/DashboardAdmin.tsx
 import { useState } from "react";
-import { Card, Col, DatePicker, Row, Typography } from "antd";
+import { Card, Col, DatePicker, Row } from "antd";
 import {
   BarChart,
   Bar,
@@ -20,8 +20,9 @@ import {
   queryGetProductPercentageByCategory,
 } from "../../api/stastic/stastic.query";
 import { formatCompactNumber, formatPriceVND } from "../../untils/FormatPrice";
+import PageHeader from "../../components/ui/PageHeader";
 
-const { Title } = Typography;
+const CHART_COLORS = ['#ee4d2d', '#1e3a5f', '#16a34a', '#f59e0b', '#64748b', '#dc2626'];
 
 const DashboardAdmin = () => {
   const [year, setYear] = useState(dayjs().year());
@@ -36,18 +37,13 @@ const DashboardAdmin = () => {
     if (date) setYear(date.year());
   };
 
-  const COLORS = [
-    "#0088FE",
-    "#00C49F",
-    "#FFBB28",
-    "#FF8042",
-    "#AA46BE",
-    "#FF6B6B",
-  ];
-
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={4}>Tổng quan hệ thống</Title>
+    <div>
+      <PageHeader
+        title="Tổng quan hệ thống"
+        subtitle="Thống kê doanh thu và phân bổ sản phẩm"
+        breadcrumbs={[{ title: 'Admin' }, { title: 'Dashboard' }]}
+      />
 
       {/* ✅ Phần thống kê trên cùng */}
       <StatisticDashboardAdmin />
@@ -85,7 +81,7 @@ const DashboardAdmin = () => {
                   }
                   labelFormatter={(label) => `Tháng ${label}`}
                 />
-                <Bar dataKey="revenue" fill="#1890ff" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="revenue" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
@@ -113,7 +109,7 @@ const DashboardAdmin = () => {
                   {(pieData?.data || []).map((_: any, index: number) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
+                      fill={CHART_COLORS[index % CHART_COLORS.length]}
                     />
                   ))}
                 </Pie>

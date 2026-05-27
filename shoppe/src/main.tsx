@@ -6,8 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store } from './features/store.tsx';
 import { Provider } from 'react-redux';
 import 'antd/dist/reset.css';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import AppThemeProvider from './theme/AppThemeProvider';
 
 const queryClient = new QueryClient();
 
@@ -15,10 +14,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <>
+        <AppThemeProvider>
           <App />
-          <ToastContainer />
-        </>
+        </AppThemeProvider>
       </QueryClientProvider>
     </Provider>
   </StrictMode>

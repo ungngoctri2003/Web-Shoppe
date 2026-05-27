@@ -1,0 +1,18 @@
+.page-header {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-container);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.page-header__title.ant-typography {
+  font-size: var(--font-size-h3) !important;
+  font-weight: 700 !important;
+}
+
+.page-header__subtitle {
+  display: block;
+  margin-top: var(--space-1);
+}

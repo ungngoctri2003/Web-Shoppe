@@ -1,0 +1,116 @@
+.checkout-page {
+  max-width: var(--content-narrow-width);
+  margin: 0 auto;
+}
+
+.checkout-page__layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 992px) {
+  .checkout-page__layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .checkout-page__main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .checkout-page__summary {
+    flex: 0 0 320px;
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-4));
+  }
+}
+
+.checkout-page__card {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  margin-bottom: var(--space-4);
+}
+
+.checkout-page__address-card {
+  margin-bottom: var(--space-4);
+}
+
+.checkout-page__address-text {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+.checkout-page__product-card {
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md) !important;
+}
+
+.checkout-page__product-img {
+  width: 100%;
+  max-width: 100px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.checkout-page__product-price {
+  color: var(--color-primary-500) !important;
+  margin: 0 !important;
+}
+
+.checkout-page__voucher-row {
+  margin-bottom: var(--space-4);
+}
+
+.checkout-page__voucher-chip {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--color-primary-50);
+  border: 1px dashed var(--color-primary-500);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  gap: var(--space-2);
+  color: var(--color-primary-500);
+  font-weight: 600;
+}
+
+.checkout-page__voucher-chip-icon {
+  color: var(--color-primary-500);
+}
+
+.checkout-page__summary-card {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.checkout-page__total {
+  color: var(--color-primary-500) !important;
+  margin: 0 0 var(--space-2) !important;
+}
+
+.checkout-page__pay-btn {
+  width: 100%;
+  height: 48px !important;
+  font-weight: 600;
+  margin-top: var(--space-3);
+}
+
+.payment-result-section {
+  background: var(--color-bg-container);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6) var(--space-4);
+}
+
+.payment-result-section .ant-result {
+  padding: var(--space-4) 0;
+}
+
+.payment-result-section__hint {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body);
+}

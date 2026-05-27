@@ -1,0 +1,42 @@
+.orders-page__card {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-sm) !important;
+  margin-bottom: var(--space-4);
+}
+
+.orders-page__card .ant-card-head {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.orders-page__card-title strong {
+  color: var(--color-text);
+}
+
+.orders-page__steps {
+  margin-bottom: var(--space-4);
+}
+
+.orders-page__item-img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.orders-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 576px) {
+  .orders-page__steps .ant-steps-item-title {
+    font-size: var(--font-size-caption) !important;
+  }
+
+  .orders-page__steps .ant-steps-item-description {
+    display: none;
+  }
+}

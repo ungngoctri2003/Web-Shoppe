@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import CustomTable from "../../../components/CustomTable";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import { getUserOrders, getUserOrdersOfSeller } from "../../../api/order/order.api";
+import PageHeader from "../../../components/ui/PageHeader";
 
 interface Order {
     id: string;
@@ -149,15 +150,19 @@ const OrderManagement = () => {
 
     return (
         <div>
-            <Flex align="center" justify="space-between" style={{ marginBottom: 16 }}>
-                <h2>Danh sách đơn hàng</h2>
-                <Search
-                    placeholder="Tìm kiếm theo mã đơn, người đặt..."
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    style={{ marginBottom: 16, width: 300 }}
-                />
-            </Flex>
+            <PageHeader
+                title="Quản lý đơn hàng"
+                breadcrumbs={[{ title: 'Seller' }, { title: 'Đơn hàng' }]}
+                extra={
+                    <Search
+                        placeholder="Tìm mã đơn, người đặt..."
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        style={{ width: 280 }}
+                        allowClear
+                    />
+                }
+            />
             {loading ? (
                 <LoadingDefault />
             ) : (

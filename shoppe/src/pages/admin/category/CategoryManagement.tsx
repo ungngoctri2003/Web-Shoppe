@@ -7,6 +7,7 @@ import { deleteCategory, getAllCategories } from '../../../api/category/category
 import LoadingDefault from '../../../components/loading/LoadingDefault';
 import { debounce } from 'lodash';
 import Search from 'antd/es/input/Search';
+import PageHeader from '../../../components/ui/PageHeader';
 
 interface Category {
     id: string;
@@ -124,15 +125,19 @@ export default function CategoryManagement() {
 
     return (
         <div>
-            <Flex align='center' justify='space-between' style={{ marginBottom: 16 }}>
-                <h2>Danh sách danh mục </h2>
-                <Search
-                    placeholder="Tìm kiếm theo tiêu đề, loại,..."
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    style={{ marginBottom: 16, width: 300 }}
-                />
-            </Flex>
+            <PageHeader
+                title="Quản lý danh mục"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Danh mục' }]}
+                extra={
+                    <Search
+                        placeholder="Tìm kiếm danh mục..."
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        style={{ width: 280 }}
+                        allowClear
+                    />
+                }
+            />
             {loading ? (
                 <LoadingDefault />
             ) : (

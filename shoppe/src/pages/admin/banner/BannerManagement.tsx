@@ -9,6 +9,7 @@ import { deleteBanner, getAllBanner } from '../../../api/banner/banner.api';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
 import { debounce } from 'lodash';
 import Search from 'antd/es/input/Search';
+import PageHeader from '../../../components/ui/PageHeader';
 
 interface Banner {
     id: string;
@@ -116,15 +117,19 @@ export default function BannerManagement() {
 
     return (
         <div>
-            <Flex align='center' justify='space-between' style={{ marginBottom: 16 }}>
-                <h2>Danh sách Banner </h2>
-                <Search
-                    placeholder="Tìm kiếm theo tiêu đề, loại,..."
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    style={{ marginBottom: 16, width: 300 }}
-                />
-            </Flex>
+            <PageHeader
+                title="Quản lý banner"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Banner' }]}
+                extra={
+                    <Search
+                        placeholder="Tìm kiếm theo tiêu đề, loại..."
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        style={{ width: 280 }}
+                        allowClear
+                    />
+                }
+            />
             {loading ? (
                 <LoadingDefault />
             ) : (

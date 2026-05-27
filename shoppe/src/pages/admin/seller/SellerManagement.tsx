@@ -7,6 +7,7 @@ import { getAllSeller, deleteSeller } from "../../../api/seller/seller.api";
 import { showError, showSuccess } from "../../../untils/ShowToast";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import Search from "antd/es/input/Search";
+import PageHeader from "../../../components/ui/PageHeader";
 
 interface Seller {
   id: string;
@@ -113,16 +114,20 @@ export default function SellerManagement() {
 
   return (
     <div>
-      <Flex align="center" justify="space-between" style={{ marginBottom: 16 }}>
-        <h2>Danh sách người bán</h2>
-        <Search
-          placeholder="Tìm kiếm theo tên, email..."
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={handleSearch}
-          style={{ marginBottom: 16, width: 300 }}
-        />
-      </Flex>
+      <PageHeader
+        title="Quản lý người bán"
+        breadcrumbs={[{ title: 'Admin' }, { title: 'Người bán' }]}
+        extra={
+          <Search
+            placeholder="Tìm kiếm theo tên, email..."
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onSearch={handleSearch}
+            style={{ width: 280 }}
+            allowClear
+          />
+        }
+      />
       {loading ? (
         <LoadingDefault />
       ) : (

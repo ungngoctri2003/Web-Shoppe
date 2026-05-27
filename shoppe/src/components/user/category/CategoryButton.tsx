@@ -1,133 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import { getAllCategories } from '../../../api/category/category.api';
 import { Spin } from 'antd';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAllCategories } from '../../../api/category/category.api';
+import '../../../css/components/CategoryButton.css';
 
 function CategoryButton() {
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [currentPage] = useState(1);
-    const [pageSize] = useState(10);
-    const navigate = useNavigate();
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
+  useEffect(() => {
     const fetchCategory = async () => {
-        setLoading(true);
-        const body = {
-            pageInfo: {
-                page: currentPage,
-                pageSize: pageSize,
-            },
-            keyWord: '',
-            filter: {},
-            sorts: {},
-        };
-        try {
-            const res: any = await getAllCategories(body);
-            if (res.success && Array.isArray(res.data)) {
-                setData(res.data);
-            } else {
-                console.error('Không thể lấy danh sách category');
-            }
-        } catch (error) {
-            console.error('Đã xảy ra lỗi khi tải dữ liệu', error);
-        } finally {
-            setLoading(false);
+      setLoading(true);
+      try {
+        const res: any = await getAllCategories({
+          pageInfo: { page: 1, pageSize: 16 },
+          keyWord: '',
+          filter: {},
+          sorts: {},
+        });
+        if (res.success && Array.isArray(res.data)) {
+          setData(res.data);
         }
+      } catch (error) {
+        console.error('Đã xảy ra lỗi khi tải danh mục', error);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchCategory();
+  }, []);
 
-    useEffect(() => {
-        fetchCategory();
-    }, []);
+  const handleCategoryClick = (categoryId: string) => {
+    navigate(`/user/products?category=${categoryId}`);
+  };
 
-    const handleCategoryClick = (categoryId: string) => {
-        navigate(`/user/products?category=${categoryId}`);
-    };
-
-    return (
-        <div
-            style={{
-                backgroundColor: '#fff',
-                padding: '24px 16px',
-                width: '100%'
-            }}
-        >
-            <p>DANH MỤC </p>
-
-            <div
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(8, 1fr)',
-                    gap: '24px 12px',
-                    backgroundColor: '#fff',
-                    width: '100%',
-                }}
-            >
-                {loading ? (
-                    <Spin />
-                ) : (
-                    data.slice(0, 16).map((category) => (
-                        <div
-                            key={category.id}
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                                padding: '20px'
-                            }}
-                            onClick={() => handleCategoryClick(category.id)}
-                            onMouseEnter={(e) => {
-                                const target = e.currentTarget;
-                                target.style.transform = 'translateY(-4px)';
-                                target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-                            }}
-                            onMouseLeave={(e) => {
-                                const target = e.currentTarget;
-                                target.style.transform = 'none';
-                                target.style.boxShadow = 'none';
-                            }}
-                        >
-                            {category.imageUrl && (
-                                <div
-                                    style={{
-                                        width: 85,
-                                        height: 85,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        overflow: 'hidden',
-                                        marginBottom: 8,
-                                    }}
-                                >
-                                    <img
-                                        src={category.imageUrl}
-                                        alt={category.name}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'contain',
-                                        }}
-                                    />
-                                </div>
-                            )}
-                            <span
-                                style={{
-                                    textAlign: 'center',
-                                    fontSize: 13,
-                                    lineHeight: '16px',
-                                    color: '#333',
-                                }}
-                            >
-                                {category.name}
-                            </span>
-                        </div>
-                    ))
-                )}
-            </div>
+  const renderItem = (category: any) => (
+    <button
+      key={category.id}
+      type="button"
+      className="category-item"
+      onClick={() => handleCategoryClick(category.id)}
+      aria-label={`Danh mục ${category.name}`}
+    >
+      {category.imageUrl && (
+        <div className="category-item__icon">
+          <img src={category.imageUrl} alt="" loading="lazy" />
         </div>
-    );
+      )}
+      <span className="category-item__label">{category.name}</span>
+    </button>
+  );
+
+  const items = data.slice(0, 16);
+
+  return (
+    <section className="category-section" aria-labelledby="category-heading">
+      <div className="category-section__header">
+        <h2 id="category-heading" className="category-section__title">
+          Danh mục nổi bật
+        </h2>
+        <button
+          type="button"
+          className="category-section__more"
+          onClick={() => navigate('/user/products?keyword=')}
+        >
+          Xem tất cả →
+        </button>
+      </div>
+      {loading ? (
+        <Spin />
+      ) : (
+        <>
+          <div className="category-scroll" role="list">
+            {items.map(renderItem)}
+          </div>
+          <div className="category-grid" role="list">
+            {items.map(renderItem)}
+          </div>
+        </>
+      )}
+    </section>
+  );
 }
 
 export default CategoryButton;

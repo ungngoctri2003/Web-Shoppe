@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Col, DatePicker, Row, Typography } from "antd";
+import { Card, Col, DatePicker, Row } from "antd";
 import {
   BarChart,
   Bar,
@@ -19,8 +19,9 @@ import {
 } from "../../api/stastic/stastic.query";
 import { formatCompactNumber, formatPriceVND } from "../../untils/FormatPrice";
 import StatisticDashboardSeller from "./component/StatisticDashboardSeller";
+import PageHeader from "../../components/ui/PageHeader";
 
-const { Title } = Typography;
+const CHART_COLORS = ['#ee4d2d', '#1e3a5f', '#16a34a', '#f59e0b', '#64748b', '#dc2626'];
 
 const DashboardSeller = () => {
   const [year, setYear] = useState(dayjs().year());
@@ -35,15 +36,6 @@ const DashboardSeller = () => {
     if (date) setYear(date.year());
   };
 
-  const COLORS = [
-    "#0088FE",
-    "#00C49F",
-    "#FFBB28",
-    "#FF8042",
-    "#AA46BE",
-    "#FF6B6B",
-  ];
-
   // ✅ Kiểm tra dữ liệu
   const hasRevenueData =
     revenueData?.data && Array.isArray(revenueData.data) && revenueData.data.length > 0;
@@ -52,9 +44,12 @@ const DashboardSeller = () => {
     pieData?.data && Array.isArray(pieData.data) && pieData.data.length > 0;
 
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={4}>Tổng quan hệ thống</Title>
-
+    <div>
+      <PageHeader
+        title="Bảng điều khiển"
+        subtitle="Doanh thu và danh mục sản phẩm của shop"
+        breadcrumbs={[{ title: 'Seller' }, { title: 'Dashboard' }]}
+      />
       {/* ✅ Phần thống kê trên cùng */}
       <StatisticDashboardSeller />
 
@@ -91,7 +86,7 @@ const DashboardSeller = () => {
                     }
                     labelFormatter={(label) => `Tháng ${label}`}
                   />
-                  <Bar dataKey="revenue" fill="#1890ff" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="revenue" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
@@ -121,7 +116,7 @@ const DashboardSeller = () => {
                     {pieData.data.map((_: any, index: number) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
+                        fill={CHART_COLORS[index % CHART_COLORS.length]}
                       />
                     ))}
                   </Pie>

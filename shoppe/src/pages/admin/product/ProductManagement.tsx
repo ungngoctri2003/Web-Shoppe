@@ -7,6 +7,7 @@ import { deleteProduct, getAllProduct } from '../../../api/product/product.api';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
 import { debounce } from 'lodash';
 import Search from 'antd/es/input/Search';
+import PageHeader from '../../../components/ui/PageHeader';
 
 interface Product {
     id: string; // tương đương Id
@@ -181,15 +182,19 @@ export default function ProductManagement() {
 
     return (
         <div>
-            <Flex align='center' justify='space-between' style={{ marginBottom: 16 }}>
-                <h2>Danh sách sản phẩm </h2>
-                <Search
-                    placeholder="Tìm kiếm theo tên, danh mục,..."
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    style={{ marginBottom: 16, width: 300 }}
-                />
-            </Flex>
+            <PageHeader
+                title="Quản lý sản phẩm"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Sản phẩm' }]}
+                extra={
+                    <Search
+                        placeholder="Tìm kiếm theo tên, danh mục..."
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        style={{ width: 280 }}
+                        allowClear
+                    />
+                }
+            />
             {loading ? (
                 <LoadingDefault />
             ) : (

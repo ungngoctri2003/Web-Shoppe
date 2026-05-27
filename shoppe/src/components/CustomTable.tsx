@@ -1,13 +1,13 @@
-import React, { useMemo } from "react";
-import { Table, Button, Popconfirm, Space, Tooltip, Card, Switch } from "antd";
-import type { TableColumnsType } from "antd";
+import React, { useMemo } from 'react';
+import { Table, Button, Popconfirm, Space, Tooltip, Card } from 'antd';
+import type { TableColumnsType } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
   LockOutlined,
   UnlockOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 
 interface CustomTableProps<T> {
   rowKey: string;
@@ -22,12 +22,13 @@ interface CustomTableProps<T> {
   onView?: (record: T) => void;
   onDelete?: (id: string) => void;
   onToggleLock?: (id: string, currentLockStatus: boolean) => void;
-  lockStatusKey?: string; // Key để lấy trạng thái khóa từ record (mặc định: 'isLocked')
+  lockStatusKey?: string;
   title?: string;
+  scrollX?: number;
   scrollY?: number;
 }
 
-function CustomTable<T>({
+function CustomTable<T extends object>({
   rowKey,
   columns,
   dataSource,
@@ -39,88 +40,73 @@ function CustomTable<T>({
   onView,
   onDelete,
   onToggleLock,
-  lockStatusKey = "isLocked",
+  lockStatusKey = 'isLocked',
   onPageChange,
-  title = "Danh sách",
+  title = 'Danh sách',
+  scrollX = 800,
+  scrollY,
 }: CustomTableProps<T>) {
-  // ✅ Cột thao tác chỉ tạo khi có onView, onDelete hoặc onToggleLock
   const actionColumn = useMemo<TableColumnsType<T>[number] | null>(() => {
     if (!onView && !onDelete && !onToggleLock) return null;
 
     return {
-      title: "Thao tác",
-      key: "action",
-      align: "center",
+      title: 'Thao tác',
+      key: 'action',
+      align: 'center',
+      fixed: 'right',
+      width: 140,
       render: (_, record) => {
-        const id = String(record[rowKey as keyof T]);
-        const isLocked = Boolean(record[lockStatusKey as keyof T]);
+        const rec = record as Record<string, unknown>;
+        const id = String(rec[rowKey]);
+        const isLocked = Boolean(rec[lockStatusKey]);
 
         return (
-          <Space
-            size="middle"
-            style={{ justifyContent: "center", display: "flex" }}
-          >
+          <Space size="small">
             {onView && (
               <Tooltip title="Chỉnh sửa">
                 <Button
+                  type="primary"
+                  ghost
                   icon={<EditOutlined />}
-                  shape="circle"
-                  style={{
-                    backgroundColor: "#faad14",
-                    borderColor: "#faad14",
-                    color: "#fff",
-                  }}
+                  size="small"
                   onClick={() => onView(record)}
+                  aria-label="Chỉnh sửa"
                 />
               </Tooltip>
             )}
-
             {onToggleLock && (
-              <Tooltip title={isLocked ? "Mở khóa" : "Khóa"}>
-                <Popconfirm
-                  title={
-                    isLocked
-                      ? "Bạn có chắc muốn mở khóa?"
-                      : "Bạn có chắc muốn khóa?"
-                  }
-                  onConfirm={() => onToggleLock(id, isLocked)}
-                  okText="Xác nhận"
-                  cancelText="Huỷ"
-                >
+              <Popconfirm
+                title={isLocked ? 'Bạn có chắc muốn mở khóa?' : 'Bạn có chắc muốn khóa?'}
+                onConfirm={() => onToggleLock(id, isLocked)}
+                okText="Xác nhận"
+                cancelText="Huỷ"
+              >
+                <Tooltip title={isLocked ? 'Mở khóa' : 'Khóa'}>
                   <Button
-                    icon={isLocked ? <LockOutlined /> : <UnlockOutlined />}
-                    shape="circle"
-                    style={{
-                      backgroundColor: isLocked ? "#faad14" : "#52c41a", // xanh = mở, cam = khóa
-                      borderColor: isLocked ? "#faad14" : "#52c41a",
-                      color: "#fff",
-                    }}
+                    type={isLocked ? 'default' : 'primary'}
+                    icon={isLocked ? <UnlockOutlined /> : <LockOutlined />}
+                    size="small"
+                    aria-label={isLocked ? 'Mở khóa' : 'Khóa'}
                   />
-
-                </Popconfirm>
-              </Tooltip>
+                </Tooltip>
+              </Popconfirm>
             )}
-
             {onDelete && (
-              <Tooltip title="Xoá">
-                <Popconfirm
-                  title="Bạn có chắc muốn xoá mục này không?"
-                  onConfirm={() => onDelete(id)}
-                  okText="Xoá"
-                  cancelText="Huỷ"
-                >
+              <Popconfirm
+                title="Bạn có chắc muốn xoá mục này không?"
+                onConfirm={() => onDelete(id)}
+                okText="Xoá"
+                cancelText="Huỷ"
+              >
+                <Tooltip title="Xoá">
                   <Button
-                    icon={<DeleteOutlined />}
                     danger
-                    shape="circle"
-                    style={{
-                      backgroundColor: "#ff4d4f",
-                      borderColor: "#ff4d4f",
-                      color: "#fff",
-                    }}
+                    icon={<DeleteOutlined />}
+                    size="small"
+                    aria-label="Xoá"
                   />
-                </Popconfirm>
-              </Tooltip>
+                </Tooltip>
+              </Popconfirm>
             )}
           </Space>
         );
@@ -128,14 +114,14 @@ function CustomTable<T>({
     };
   }, [onView, onDelete, onToggleLock, rowKey, lockStatusKey]);
 
-  // ✅ Nếu có actionColumn thì thêm vào cuối
-  const finalColumns = useMemo(() => {
-    return actionColumn ? [...columns, actionColumn] : columns;
-  }, [columns, actionColumn]);
+  const finalColumns = useMemo(
+    () => (actionColumn ? [...columns, actionColumn] : columns),
+    [columns, actionColumn]
+  );
 
   return (
     <Card
-      title={<span style={{ fontWeight: 580 }}>{title}</span>}
+      title={title}
       extra={
         onAdd && (
           <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
@@ -143,21 +129,22 @@ function CustomTable<T>({
           </Button>
         )
       }
-      style={{ borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+      style={{ borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)' }}
     >
       <Table<T>
         rowKey={rowKey}
         columns={finalColumns}
         dataSource={dataSource}
         loading={loading}
+        scroll={{ x: scrollX, y: scrollY }}
         pagination={{
           current: currentPage,
-          pageSize: pageSize,
-          total: total,
+          pageSize,
+          total,
           onChange: onPageChange,
           showSizeChanger: false,
+          showTotal: (t, range) => `${range[0]}-${range[1]} của ${t}`,
         }}
-        rowClassName={() => "custom-table-row"}
       />
     </Card>
   );

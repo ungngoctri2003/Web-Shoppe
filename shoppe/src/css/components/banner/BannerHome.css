@@ -1,0 +1,33 @@
+.banner-home {
+  margin-bottom: var(--space-4);
+  filter: drop-shadow(0 8px 24px rgba(15, 23, 42, 0.08));
+}
+
+.banner-home__slider-col {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.banner-home__static-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.banner-home__static-item {
+  flex: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 0;
+}
+
+@media (min-width: 768px) {
+  .banner-home__slider-col {
+    min-height: 280px;
+  }
+
+  .banner-home__static-col {
+    min-height: 280px;
+  }
+}

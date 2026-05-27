@@ -1,0 +1,123 @@
+.promo-banner {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  overflow: hidden;
+}
+
+.promo-banner__flash {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(105deg, #ff6b4a 0%, #ee4d2d 45%, #d73211 100%);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.promo-banner__flash::after {
+  content: '';
+  position: absolute;
+  right: -20%;
+  top: -50%;
+  width: 55%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.08);
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.promo-banner__label {
+  flex-shrink: 0;
+  font-size: var(--font-size-caption);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: var(--space-1) var(--space-2);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.promo-banner__content {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.promo-banner__title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+}
+
+.promo-banner__sub {
+  margin: 0;
+  font-size: var(--font-size-caption);
+  opacity: 0.92;
+}
+
+.promo-banner__cta {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  background: var(--color-bg-container) !important;
+  color: var(--color-primary-500) !important;
+  border: none !important;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.promo-banner__side {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 200px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .promo-banner__side {
+    display: flex;
+  }
+}
+
+.promo-banner__side-card {
+  flex: 1;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-container);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.promo-banner__side-card:hover {
+  border-color: var(--color-primary-500);
+  box-shadow: var(--shadow-md);
+}
+
+.promo-banner__side-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary-500);
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+}
+
+.promo-banner__side-text {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.3;
+}
