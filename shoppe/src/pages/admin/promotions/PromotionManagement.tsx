@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import type { TableColumnsType } from "antd";
 import { Flex, message } from "antd";
 import { debounce } from "lodash";
-import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import {
   deletePromotion,
@@ -11,7 +10,8 @@ import {
 import CustomTable from "../../../components/CustomTable";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import { showError, showSuccess } from "../../../untils/ShowToast";
-import PageHeader from "../../../components/ui/PageHeader";
+import BackOfficePage from "../../../components/backoffice/BackOfficePage";
+import ManagementPageShell from "../../../components/backoffice/ManagementPageShell";
 
 interface Promotion {
   id: string;
@@ -165,38 +165,37 @@ export default function PromotionManagement() {
   };
 
   return (
-    <div>
-      <PageHeader
+    <BackOfficePage>
+      <ManagementPageShell
         title="Quản lý khuyến mãi"
+        subtitle="Mã giảm giá và chương trình khuyến mãi"
         breadcrumbs={[{ title: 'Admin' }, { title: 'Khuyến mãi' }]}
-        extra={
-          <Search
-            placeholder="Tìm kiếm mã, mô tả..."
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onSearch={handleSearch}
-            style={{ width: 280 }}
-            allowClear
+        onAdd={handleAdd}
+        addLabel="Thêm khuyến mãi"
+        search={{
+          placeholder: 'Tìm kiếm mã, mô tả...',
+          value: keyword,
+          onChange: setKeyword,
+          onSearch: handleSearch,
+        }}
+      >
+        {loading ? (
+          <LoadingDefault />
+        ) : (
+          <CustomTable<Promotion>
+            rowKey="id"
+            columns={columns}
+            dataSource={data}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            total={total}
+            onPageChange={handlePageChange}
+            onView={handleView}
+            onDelete={handleDelete}
+            title=""
           />
-        }
-      />
-
-      {loading ? (
-        <LoadingDefault />
-      ) : (
-        <CustomTable<Promotion>
-          rowKey="id"
-          columns={columns}
-          dataSource={data}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          total={total}
-          onPageChange={handlePageChange}
-          onAdd={handleAdd}
-          onView={handleView}
-          onDelete={handleDelete}
-        />
-      )}
-    </div>
+        )}
+      </ManagementPageShell>
+    </BackOfficePage>
   );
 }

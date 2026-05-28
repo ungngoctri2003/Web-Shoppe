@@ -1,0 +1,27 @@
+.backoffice-table.ant-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+.backoffice-table .ant-card-head-title {
+  font-weight: 700;
+  font-size: var(--font-size-body-lg);
+}
+
+.backoffice-table .ant-table-thead > tr > th {
+  font-weight: 600;
+  background: var(--color-neutral-50) !important;
+}
+
+.backoffice-table .ant-table-tbody > tr:hover > td {
+  background: var(--color-primary-50) !important;
+}
+
+.backoffice-table .ant-table-tbody > tr:nth-child(even) > td {
+  background: rgba(var(--color-primary-rgb), 0.02);
+}
+
+.backoffice-table .ant-table-tbody > tr:nth-child(even):hover > td {
+  background: var(--color-primary-50) !important;
+}

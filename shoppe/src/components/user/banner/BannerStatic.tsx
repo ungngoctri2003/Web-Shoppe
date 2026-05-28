@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
-import { message } from "antd";
-import { getBannerByType } from "../../../api/banner/banner.api";
-import LoadingDefault from "../../loading/LoadingDefault";
+import { useEffect, useState } from 'react';
+import { message } from 'antd';
+import { getBannerByType } from '../../../api/banner/banner.api';
+import LoadingDefault from '../../loading/LoadingDefault';
+import { getBannerLinkValue } from '../../../untils/bannerLink';
+import BannerClickable from './BannerClickable';
+import '../../../css/components/banner/BannerStatic.css';
 
 interface BannerStaticProps {
-  bannerType: string; // ví dụ: "homepage", "sale", "product"
+  bannerType: string;
   index: number;
 }
 
-const BannerStatic = ({ bannerType }: BannerStaticProps) => {
+const BannerStatic = ({ bannerType, index }: BannerStaticProps) => {
   const [banners, setBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -19,11 +22,11 @@ const BannerStatic = ({ bannerType }: BannerStaticProps) => {
       if (res.success) {
         setBanners(res.data || []);
       } else {
-        message.error("Không thể lấy danh sách banner");
+        message.error('Không thể lấy danh sách banner');
       }
     } catch (error) {
       console.error(error);
-      message.error("Đã xảy ra lỗi khi tải banner");
+      message.error('Đã xảy ra lỗi khi tải banner');
     } finally {
       setLoading(false);
     }
@@ -37,32 +40,30 @@ const BannerStatic = ({ bannerType }: BannerStaticProps) => {
     return <LoadingDefault />;
   }
 
+  const banner = banners[index];
+  if (!banner) {
+    return null;
+  }
+
+  const img = (
+    <img
+      src={banner.imageUrl}
+      alt={banner.title || 'Banner'}
+      className="banner-static__img"
+      loading="lazy"
+      decoding="async"
+    />
+  );
+
   return (
-    <div style={{ height: "100%", width: "100%" }}>
-      {banners?.map((banner: any) => (
-        <div
-          key={banner.id}
-          style={{
-            backgroundImage: `url("${banner.imageUrl}")`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            height: "100%",
-            width: "100%",
-            borderRadius: 12, // Bo góc
-            boxShadow: "0 4px 15px rgba(0,0,0,0.15)", // Đổ bóng
-            transition: "transform 0.3s ease, box-shadow 0.3s ease", // Hiệu ứng mượt
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "scale(1.01)";
-            e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.25)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "scale(1)";
-            e.currentTarget.style.boxShadow = "0 4px 15px rgba(0,0,0,0.15)";
-          }}
-        ></div>
-      ))}
+    <div className="banner-static">
+      <BannerClickable
+        linkTo={getBannerLinkValue(banner)}
+        className="banner-static__link"
+        ariaLabel={banner.title || 'Banner'}
+      >
+        {img}
+      </BannerClickable>
     </div>
   );
 };

@@ -4,7 +4,6 @@ import {
   Form,
   Input,
   Avatar,
-  Typography,
   Row,
   Col,
   Upload,
@@ -17,11 +16,15 @@ import { showError, showSuccess } from "../../untils/ShowToast";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserState } from "../../features/slices/user.slice";
 import type { RootState } from "../../features/store";
+import BackOfficePage from "../../components/backoffice/BackOfficePage";
+import FormPageShell from "../../components/backoffice/FormPageShell";
+import { useLocation } from "react-router-dom";
+import "../../css/components/backoffice/ProfileForm.css";
 
-
-const { Title, Text } = Typography;
 
 export const ProfileForm = () => {
+  const location = useLocation();
+  const isUserProfile = location.pathname.startsWith('/user');
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -103,20 +106,9 @@ export const ProfileForm = () => {
     handleGetInfoUser();
   }, []);
 
-  return (
-    <Card
-      bordered={false}
-      style={{
-        border: "2px solid #d9d9d9",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <Title level={4} style={{ marginBottom: 24 }}>
-        Hồ Sơ Của Tôi
-      </Title>
-      <Text type="secondary">Quản lý thông tin hồ sơ để bảo mật tài khoản</Text>
-
-      <Row gutter={48} style={{ marginTop: 32 }}>
+  const profileCard = (
+    <Card bordered={false} className="profile-form-card">
+      <Row gutter={48}>
         <Col span={16}>
           <Form form={form} layout="vertical" onFinish={onFinish}>
             {/* hidden id field */}
@@ -231,6 +223,26 @@ export const ProfileForm = () => {
         </Col>
       </Row>
     </Card>
+  );
+
+  if (isUserProfile) {
+    return profileCard;
+  }
+
+  return (
+    <BackOfficePage narrow>
+      <FormPageShell
+        title="Hồ sơ của tôi"
+        subtitle="Quản lý thông tin hồ sơ để bảo mật tài khoản"
+        eyebrow={role === 'Seller' ? 'Seller' : 'Admin'}
+        breadcrumbs={[
+          { title: role === 'Seller' ? 'Seller' : 'Admin' },
+          { title: 'Hồ sơ' },
+        ]}
+      >
+        {profileCard}
+      </FormPageShell>
+    </BackOfficePage>
   );
 };
 

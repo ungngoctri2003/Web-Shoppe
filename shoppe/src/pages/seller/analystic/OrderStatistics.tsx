@@ -5,6 +5,9 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { GetSellerOrderStatistic } from "../../../api/stastic/stastic.api";
 import type { ColumnsType } from "antd/es/table";
+import BackOfficePage from "../../../components/backoffice/BackOfficePage";
+import ManagementPageShell from "../../../components/backoffice/ManagementPageShell";
+import RevealSection from "../../../components/ui/RevealSection";
 
 const { RangePicker } = DatePicker;
 
@@ -144,21 +147,39 @@ const OrderStatistics = () => {
         },
     ];
 
-    return (
-        <div>
-            <Space style={{ marginBottom: 16 }}>
-                <RangePicker
-                    value={dateRange as any}
-                    onChange={(dates) => setDateRange(dates as [Dayjs, Dayjs] | null)}
-                />
-                <Button type="primary" onClick={fetchOrders}>
-                    Lọc
-                </Button>
-                <Button onClick={exportExcel}>Xuất Excel</Button>
-            </Space>
+    const toolbar = (
+        <Space wrap>
+            <RangePicker
+                value={dateRange as [Dayjs, Dayjs] | null}
+                onChange={(dates) => setDateRange(dates as [Dayjs, Dayjs] | null)}
+            />
+            <Button type="primary" onClick={fetchOrders}>
+                Lọc
+            </Button>
+            <Button onClick={exportExcel}>Xuất Excel</Button>
+        </Space>
+    );
 
-            <Table rowKey="orderCode" columns={columns} dataSource={orders} loading={loading} />
-        </div>
+    return (
+        <BackOfficePage>
+            <ManagementPageShell
+                title="Thống kê đơn hàng"
+                subtitle="Báo cáo doanh thu theo khoảng thời gian"
+                breadcrumbs={[{ title: 'Seller' }, { title: 'Thống kê' }]}
+                headerExtra={toolbar}
+            >
+                <RevealSection delay={0}>
+                    <Table
+                        className="backoffice-table"
+                        rowKey="orderCode"
+                        columns={columns}
+                        dataSource={orders}
+                        loading={loading}
+                        pagination={{ showSizeChanger: true, showTotal: (t) => `Tổng ${t} đơn` }}
+                    />
+                </RevealSection>
+            </ManagementPageShell>
+        </BackOfficePage>
     );
 };
 

@@ -10,5 +10,8 @@
         public const string ROLE_ADMIN = "Admin";
         public const string ROLE_SELLER = "Seller";
         public const string ROLE_USER = "User";
+
+        public const int PasswordMinLength = 6;
+        public const string PasswordMinLengthMessage = "Mật khẩu phải có ít nhất 6 ký tự";
     }
 }

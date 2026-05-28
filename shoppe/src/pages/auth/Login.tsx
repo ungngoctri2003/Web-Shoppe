@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Input, Button, Flex } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoginAPI } from "../../api/auth.api";
 import { DEFAULT_TEXT_DARK } from "../../constants/Color";
 import { showError, showSuccess } from "../../untils/ShowToast";
@@ -11,10 +11,14 @@ import { setAppState } from "../../features/slices/app.slice";
 import { getUserInfo } from "../../api/user.api";
 import { setUserState } from "../../features/slices/user.slice";
 import AuthLayout from "../../components/layout/AuthLayout";
+import { passwordRules } from "../../constants/authValidation";
+import { mergeGuestCartToServer } from "../../services/cartSync";
+import { clearLoginRedirect, resolveLoginRedirect } from "../../untils/loginRedirect";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const disptach = useDispatch();
 
   const handleLogin = async (value: { email: string; password: string }) => {
@@ -50,9 +54,13 @@ const Login = () => {
           case ROLE.SELLER:
             navigate("/seller");
             break;
-          default:
-            navigate("/user");
+          default: {
+            await mergeGuestCartToServer(disptach);
+            const redirectTo = resolveLoginRedirect(location, "/user");
+            clearLoginRedirect();
+            navigate(redirectTo, { replace: true });
             break;
+          }
         }
       }
     } catch (e: any) {
@@ -75,7 +83,7 @@ const Login = () => {
         <Form.Item
           label="Mật khẩu"
           name="password"
-          rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+          rules={passwordRules}
         >
           <Input.Password placeholder="Nhập mật khẩu" />
         </Form.Item>

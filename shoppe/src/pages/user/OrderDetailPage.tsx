@@ -7,7 +7,6 @@ import {
     Typography,
     Tag,
     Spin,
-    message,
     Divider,
     Button,
     Flex,
@@ -26,6 +25,7 @@ import PageContainer from "../../components/ui/PageContainer";
 import PageHeader from "../../components/ui/PageHeader";
 import CheckoutSteps from "../../components/ui/CheckoutSteps";
 import "../../css/pages/CheckoutPage.css";
+import { showError, showInfo, showSuccess, showWarning } from "../../untils/ShowToast";
 
 const { Text, Title } = Typography;
 
@@ -76,6 +76,8 @@ const OrderDetail = () => {
     const location = useLocation();
     const selectedItems: OrderItem[] = location.state?.items || [];
     const cartItemIds: string[] = location.state?.cartItemIds || [];
+    const appliedVoucherFromCart: (Voucher & { discount?: number }) | null =
+        location.state?.appliedVoucher ?? null;
     const navigate = useNavigate();
     const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
     const [order, setOrder] = useState<Order | null>(null);
@@ -90,16 +92,24 @@ const OrderDetail = () => {
         if (orderId) {
             fetchOrderDetail(orderId);
         } else if (selectedItems.length > 0) {
-            const totalAmount = selectedItems.reduce(
+            const originalAmount = selectedItems.reduce(
                 (sum, item) => sum + item.price * item.quantity,
                 0
             );
+            const discount = appliedVoucherFromCart?.discount ?? 0;
+            const totalAmount = Math.max(0, originalAmount - discount);
+
+            if (appliedVoucherFromCart?.code) {
+                setSelectedVoucher(appliedVoucherFromCart);
+            }
+
             setOrder({
                 id: "TEMP-CHECKOUT",
                 status: "Pending",
                 orderItems: selectedItems,
                 totalAmount,
-                originalAmount: totalAmount,
+                originalAmount,
+                promotionCode: appliedVoucherFromCart?.code ?? null,
                 paymentMethod: "VNPay",
             });
             setCartTotal(totalAmount);
@@ -113,7 +123,7 @@ const OrderDetail = () => {
         try {
             const res: any = await getOrderDetail(id);
             if (!res) {
-                message.error("Không tìm thấy đơn hàng.");
+                showError("Không tìm thấy đơn hàng.");
                 return;
             }
             setOrder({
@@ -122,7 +132,7 @@ const OrderDetail = () => {
             });
         } catch (error) {
             console.error(error);
-            message.error("Không thể tải chi tiết đơn hàng.");
+            showError("Không thể tải chi tiết đơn hàng.");
         } finally {
             setLoading(false);
         }
@@ -143,7 +153,7 @@ const OrderDetail = () => {
             }
         } catch (error) {
             console.error(error);
-            message.error("Không thể tải địa chỉ.");
+            showError("Không thể tải địa chỉ.");
         }
     };
 
@@ -163,7 +173,7 @@ const OrderDetail = () => {
                 totalAmount: order.originalAmount,
             });
             setCartTotal(order.originalAmount);
-            message.info("Đã bỏ chọn voucher.");
+            showInfo("Đã bỏ chọn voucher.");
             return;
         }
 
@@ -185,7 +195,7 @@ const OrderDetail = () => {
             totalAmount: newTotal,
         });
         setCartTotal(newTotal);
-        message.success(`Đã áp dụng mã: ${voucher.code}`);
+        showSuccess(`Đã áp dụng mã: ${voucher.code}`);
     };
 
 
@@ -193,7 +203,7 @@ const OrderDetail = () => {
     const handlePayment = async () => {
         if (!order) return;
         if (!selectedAddressId) {
-            message.warning("Vui lòng chọn địa chỉ giao hàng trước.");
+            showWarning("Vui lòng chọn địa chỉ giao hàng trước.");
             return;
         }
 
@@ -218,7 +228,7 @@ const OrderDetail = () => {
 
                 const res: any = await createOrder(payload);
                 if (!res?.success || !res.data) {
-                    message.error(res?.message || "Không thể tạo đơn hàng.");
+                    showError(res?.message || "Không thể tạo đơn hàng.");
                     return;
                 }
 
@@ -244,11 +254,11 @@ const OrderDetail = () => {
             if (payRes?.paymentUrl) {
                 window.open(payRes.paymentUrl, "_blank"); // Mở trong tab mới
             } else {
-                message.error("Không lấy được link thanh toán.");
+                showError("Không lấy được link thanh toán.");
             }
         } catch (err) {
             console.error("🚀 ~ handlePayment error:", err);
-            message.error("Thanh toán thất bại.");
+            showError("Thanh toán thất bại.");
         } finally {
             setLoading(false);
         }
@@ -262,7 +272,9 @@ const OrderDetail = () => {
     if (loading && !order) {
         return (
             <PageContainer style={{ textAlign: "center", padding: 48 }}>
-                <Spin size="large" tip="Đang tải đơn hàng..." />
+                <Spin size="large" tip="Đang tải đơn hàng...">
+                    <div style={{ minHeight: 120, minWidth: 200 }} aria-hidden />
+                </Spin>
             </PageContainer>
         );
     }

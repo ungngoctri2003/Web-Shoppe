@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Card, Col, DatePicker, Row } from "antd";
+import { useState } from 'react';
+import { Button, Col, DatePicker, Flex, Row } from 'antd';
+import { PlusOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import {
   BarChart,
   Bar,
@@ -11,19 +12,24 @@ import {
   Pie,
   Cell,
   Legend,
-} from "recharts";
-import dayjs from "dayjs";
+} from 'recharts';
+import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 import {
   queryGetAnnualRevenueStatisticsOfSeller,
   queryGetProductPercentageByCategoryOfSeller,
-} from "../../api/stastic/stastic.query";
-import { formatCompactNumber, formatPriceVND } from "../../untils/FormatPrice";
-import StatisticDashboardSeller from "./component/StatisticDashboardSeller";
-import PageHeader from "../../components/ui/PageHeader";
-
-const CHART_COLORS = ['#ee4d2d', '#1e3a5f', '#16a34a', '#f59e0b', '#64748b', '#dc2626'];
+} from '../../api/stastic/stastic.query';
+import { formatCompactNumber, formatPriceVND } from '../../untils/FormatPrice';
+import StatisticDashboardSeller from './component/StatisticDashboardSeller';
+import PageHeader from '../../components/ui/PageHeader';
+import BackOfficePage from '../../components/backoffice/BackOfficePage';
+import ChartSection from '../../components/backoffice/ChartSection';
+import RevealSection from '../../components/ui/RevealSection';
+import { CHART_COLORS } from '../../constants/chartColors';
+import '../../css/components/backoffice/DashboardQuickActions.css';
 
 const DashboardSeller = () => {
+  const navigate = useNavigate();
   const [year, setYear] = useState(dayjs().year());
 
   const { isLoading: isLoadingBarChart, data: revenueData } =
@@ -32,107 +38,133 @@ const DashboardSeller = () => {
   const { isLoading: isLoadingPieChart, data: pieData } =
     queryGetProductPercentageByCategoryOfSeller();
 
-  const handleYearChange = (date: any) => {
+  const handleYearChange = (date: dayjs.Dayjs | null) => {
     if (date) setYear(date.year());
   };
 
-  // ✅ Kiểm tra dữ liệu
-  const hasRevenueData =
-    revenueData?.data && Array.isArray(revenueData.data) && revenueData.data.length > 0;
-
-  const hasPieData =
-    pieData?.data && Array.isArray(pieData.data) && pieData.data.length > 0;
+  const revenueList = revenueData?.data ?? [];
+  const pieList = pieData?.data ?? [];
 
   return (
-    <div>
-      <PageHeader
-        title="Bảng điều khiển"
-        subtitle="Doanh thu và danh mục sản phẩm của shop"
-        breadcrumbs={[{ title: 'Seller' }, { title: 'Dashboard' }]}
-      />
-      {/* ✅ Phần thống kê trên cùng */}
-      <StatisticDashboardSeller />
+    <BackOfficePage>
+      <RevealSection delay={0}>
+        <PageHeader
+          variant="rich"
+          eyebrow="Seller"
+          title="Bảng điều khiển"
+          subtitle="Doanh thu và danh mục sản phẩm của shop"
+          breadcrumbs={[{ title: 'Seller' }, { title: 'Dashboard' }]}
+        />
+      </RevealSection>
+
+      <RevealSection delay={60}>
+        <Flex gap={12} wrap="wrap" className="dashboard-quick-actions">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            className="dashboard-quick-actions__btn"
+            onClick={() => navigate('/seller/products/create')}
+          >
+            Thêm sản phẩm
+          </Button>
+          <Button
+            icon={<UnorderedListOutlined />}
+            className="dashboard-quick-actions__btn"
+            onClick={() => navigate('/seller/orders')}
+          >
+            Xem đơn hàng
+          </Button>
+        </Flex>
+      </RevealSection>
+
+      <RevealSection delay={80}>
+        <StatisticDashboardSeller />
+      </RevealSection>
 
       <Row gutter={[24, 24]}>
-        {/* ✅ Biểu đồ doanh thu theo năm (chỉ hiển thị nếu có dữ liệu) */}
-        {hasRevenueData && (
-          <Col xs={24} md={24}>
-            <Card
-              title={`Biểu đồ doanh thu năm ${year}`}
-              loading={isLoadingBarChart}
-              extra={
-                <DatePicker
-                  picker="year"
-                  onChange={handleYearChange}
-                  defaultValue={dayjs()}
+        <Col xs={24}>
+          <ChartSection
+            title={`Biểu đồ doanh thu năm ${year}`}
+            loading={isLoadingBarChart}
+            empty={!isLoadingBarChart && revenueList.length === 0}
+            delay={120}
+            extra={
+              <DatePicker
+                picker="year"
+                onChange={handleYearChange}
+                defaultValue={dayjs()}
+              />
+            }
+          >
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={revenueList}>
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(value) => `Th${value}`}
+                  tick={{ fontSize: 12 }}
                 />
-              }
-            >
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={revenueData.data}>
-                  <XAxis
-                    dataKey="month"
-                    tickFormatter={(value) => `Th${value}`}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis
-                    tickFormatter={(value) => formatCompactNumber(value)}
-                    tick={{ fontSize: 12 }}
-                    width={80}
-                  />
-                  <Tooltip
-                    formatter={(value: number) =>
-                      `Doanh thu: ${formatPriceVND(value)}`
-                    }
-                    labelFormatter={(label) => `Tháng ${label}`}
-                  />
-                  <Bar dataKey="revenue" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-        )}
+                <YAxis
+                  tickFormatter={(value) => formatCompactNumber(value)}
+                  tick={{ fontSize: 12 }}
+                  width={80}
+                />
+                <Tooltip
+                  formatter={(value: number) =>
+                    `Doanh thu: ${formatPriceVND(value)}`
+                  }
+                  labelFormatter={(label) => `Tháng ${label}`}
+                />
+                <Bar
+                  dataKey="revenue"
+                  fill="var(--color-primary-500)"
+                  radius={[4, 4, 0, 0]}
+                  animationDuration={800}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartSection>
+        </Col>
 
-        {/* ✅ Biểu đồ tỉ lệ danh mục (chỉ hiển thị nếu có dữ liệu) */}
-        {hasPieData && (
-          <Col xs={24} md={24}>
-            <Card
-              title="Top 5 danh mục có tỉ lệ sản phẩm nhiều nhất"
-              loading={isLoadingPieChart}
-            >
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={pieData.data}
-                    dataKey="percentage"
-                    nameKey="categoryName"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label={(entry) =>
-                      `${entry.categoryName} (${entry.percentage}%)`
-                    }
-                  >
-                    {pieData.data.map((_: any, index: number) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={CHART_COLORS[index % CHART_COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value: number, _: any, entry: any) =>
-                      `${entry.payload.categoryName}: ${value}%`
-                    }
-                  />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-        )}
+        <Col xs={24}>
+          <ChartSection
+            title="Top 5 danh mục có tỉ lệ sản phẩm nhiều nhất"
+            loading={isLoadingPieChart}
+            empty={!isLoadingPieChart && pieList.length === 0}
+            delay={180}
+          >
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={pieList}
+                  dataKey="percentage"
+                  nameKey="categoryName"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={(entry) =>
+                    `${entry.categoryName} (${entry.percentage}%)`
+                  }
+                  animationDuration={800}
+                >
+                  {pieList.map((_: unknown, index: number) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={CHART_COLORS[index % CHART_COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value: number, _: unknown, entry: { payload?: { categoryName?: string } }) =>
+                    `${entry?.payload?.categoryName ?? ''}: ${value}%`
+                  }
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartSection>
+        </Col>
       </Row>
-    </div>
+    </BackOfficePage>
   );
 };
 

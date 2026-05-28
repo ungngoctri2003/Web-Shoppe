@@ -107,14 +107,14 @@ VALUES
 -- ===================== BANNERS (trang chủ FE) =====================
 INSERT INTO [Banners] ([Id], [Title], [ImageUrl], [Type], [LinkTo], [IsActive], [Created], [Modified], [IsDeleted])
 VALUES
-('B0010001-0000-0000-0000-000000000001', N'Banner trang chủ chính', N'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200', N'homepage',     N'/', 1, @Now, @Now, 0),
-('B0010002-0000-0000-0000-000000000002', N'Siêu sale cuối tuần',   N'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=1200', N'Top Banner',   N'/', 1, @Now, @Now, 0),
-('B0010003-0000-0000-0000-000000000003', N'Freeship toàn quốc',     N'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200', N'Top Banner 1', N'/', 1, @Now, @Now, 0);
+('B0010001-0000-0000-0000-000000000001', N'Banner trang chủ chính', N'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200', N'homepage',     N'/user/products', 1, @Now, @Now, 0),
+('B0010002-0000-0000-0000-000000000002', N'Siêu sale cuối tuần',   N'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=1200', N'Top Banner',   N'/user/products', 1, @Now, @Now, 0),
+('B0010003-0000-0000-0000-000000000003', N'Freeship toàn quốc',     N'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200', N'Top Banner 1', N'/user/cart', 1, @Now, @Now, 0);
 
 -- Thêm banner slider phụ
 INSERT INTO [Banners] ([Id], [Title], [ImageUrl], [Type], [LinkTo], [IsActive], [Created], [Modified], [IsDeleted])
 VALUES
-('B0010004-0000-0000-0000-000000000004', N'Điện thoại hot', N'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200', N'homepage', N'/', 1, @Now, @Now, 0);
+('B0010004-0000-0000-0000-000000000004', N'Điện thoại hot', N'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200', N'homepage', N'/user/products', 1, @Now, @Now, 0);
 
 -- ===================== PROMOTIONS =====================
 INSERT INTO [Promotions] ([Id], [UserId], [Code], [Description], [DiscountPercent], [MinOrderValue], [QuantityLimit], [UsedQuantity], [StartDate], [EndDate], [Status], [Created], [Modified], [IsDeleted])

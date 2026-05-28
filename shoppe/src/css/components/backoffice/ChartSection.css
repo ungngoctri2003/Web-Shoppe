@@ -1,0 +1,46 @@
+.chart-section.ant-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.chart-section .ant-card-head {
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-primary-50) 0%, var(--color-bg-container) 100%);
+  min-height: auto;
+  padding: var(--space-4) var(--space-5);
+}
+
+.chart-section .ant-card-head-title {
+  padding: 0;
+}
+
+.chart-section__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.chart-section__eyebrow {
+  font-size: var(--font-size-caption);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-primary-500);
+}
+
+.chart-section__title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.chart-section__body {
+  min-height: 280px;
+}
+
+.chart-section .ant-card-body {
+  padding: var(--space-4) var(--space-5);
+}

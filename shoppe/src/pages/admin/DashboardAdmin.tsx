@@ -1,6 +1,5 @@
-// src/pages/admin/DashboardAdmin.tsx
-import { useState } from "react";
-import { Card, Col, DatePicker, Row } from "antd";
+import { useState } from 'react';
+import { Col, DatePicker, Row } from 'antd';
 import {
   BarChart,
   Bar,
@@ -12,17 +11,19 @@ import {
   Pie,
   Cell,
   Legend,
-} from "recharts";
-import dayjs from "dayjs";
-import StatisticDashboardAdmin from "./components/StatisticDashboardAdmin";
+} from 'recharts';
+import dayjs from 'dayjs';
+import StatisticDashboardAdmin from './components/StatisticDashboardAdmin';
 import {
   queryGetAnnualRevenueStatistics,
   queryGetProductPercentageByCategory,
-} from "../../api/stastic/stastic.query";
-import { formatCompactNumber, formatPriceVND } from "../../untils/FormatPrice";
-import PageHeader from "../../components/ui/PageHeader";
-
-const CHART_COLORS = ['#ee4d2d', '#1e3a5f', '#16a34a', '#f59e0b', '#64748b', '#dc2626'];
+} from '../../api/stastic/stastic.query';
+import { formatCompactNumber, formatPriceVND } from '../../untils/FormatPrice';
+import PageHeader from '../../components/ui/PageHeader';
+import BackOfficePage from '../../components/backoffice/BackOfficePage';
+import ChartSection from '../../components/backoffice/ChartSection';
+import RevealSection from '../../components/ui/RevealSection';
+import { CHART_COLORS } from '../../constants/chartColors';
 
 const DashboardAdmin = () => {
   const [year, setYear] = useState(dayjs().year());
@@ -33,28 +34,36 @@ const DashboardAdmin = () => {
   const { isLoading: isLoadingPieChart, data: pieData } =
     queryGetProductPercentageByCategory();
 
-  const handleYearChange = (date: any) => {
+  const handleYearChange = (date: dayjs.Dayjs | null) => {
     if (date) setYear(date.year());
   };
 
+  const revenueList = revenueData?.data || [];
+  const pieList = pieData?.data || [];
+
   return (
-    <div>
-      <PageHeader
-        title="Tổng quan hệ thống"
-        subtitle="Thống kê doanh thu và phân bổ sản phẩm"
-        breadcrumbs={[{ title: 'Admin' }, { title: 'Dashboard' }]}
-      />
+    <BackOfficePage>
+      <RevealSection delay={0}>
+        <PageHeader
+          variant="rich"
+          eyebrow="Admin"
+          title="Tổng quan hệ thống"
+          subtitle="Thống kê doanh thu và phân bổ sản phẩm"
+          breadcrumbs={[{ title: 'Admin' }, { title: 'Dashboard' }]}
+        />
+      </RevealSection>
 
-      {/* ✅ Phần thống kê trên cùng */}
-      <StatisticDashboardAdmin />
+      <RevealSection delay={80}>
+        <StatisticDashboardAdmin />
+      </RevealSection>
 
-      {/* ✅ Biểu đồ */}
       <Row gutter={[24, 24]}>
-        {/* Doanh thu theo năm */}
-        <Col xs={24} md={24}>
-          <Card
+        <Col xs={24}>
+          <ChartSection
             title={`Biểu đồ doanh thu năm ${year}`}
             loading={isLoadingBarChart}
+            empty={!isLoadingBarChart && revenueList.length === 0}
+            delay={120}
             extra={
               <DatePicker
                 picker="year"
@@ -64,7 +73,7 @@ const DashboardAdmin = () => {
             }
           >
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueData?.data || []}>
+              <BarChart data={revenueList}>
                 <XAxis
                   dataKey="month"
                   tickFormatter={(value) => `Th${value}`}
@@ -81,22 +90,28 @@ const DashboardAdmin = () => {
                   }
                   labelFormatter={(label) => `Tháng ${label}`}
                 />
-                <Bar dataKey="revenue" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="revenue"
+                  fill="var(--color-primary-500)"
+                  radius={[4, 4, 0, 0]}
+                  animationDuration={800}
+                />
               </BarChart>
             </ResponsiveContainer>
-          </Card>
+          </ChartSection>
         </Col>
 
-        {/* Tỉ lệ sản phẩm theo danh mục */}
-        <Col xs={24} md={24}>
-          <Card
+        <Col xs={24}>
+          <ChartSection
             title="Top 5 danh mục có tỉ lệ sản phẩm nhiều nhất"
             loading={isLoadingPieChart}
+            empty={!isLoadingPieChart && pieList.length === 0}
+            delay={180}
           >
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={pieData?.data || []}
+                  data={pieList}
                   dataKey="percentage"
                   nameKey="categoryName"
                   cx="50%"
@@ -105,8 +120,9 @@ const DashboardAdmin = () => {
                   label={(entry) =>
                     `${entry.categoryName} (${entry.percentage}%)`
                   }
+                  animationDuration={800}
                 >
-                  {(pieData?.data || []).map((_: any, index: number) => (
+                  {pieList.map((_: unknown, index: number) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={CHART_COLORS[index % CHART_COLORS.length]}
@@ -114,17 +130,17 @@ const DashboardAdmin = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, _: any, entry: any) =>
-                    `${entry.payload.categoryName}: ${value}%`
+                  formatter={(value: number, _: unknown, entry: { payload?: { categoryName?: string } }) =>
+                    `${entry?.payload?.categoryName ?? ''}: ${value}%`
                   }
                 />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
-          </Card>
+          </ChartSection>
         </Col>
       </Row>
-    </div>
+    </BackOfficePage>
   );
 };
 

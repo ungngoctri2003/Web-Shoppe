@@ -8,8 +8,8 @@ import { showError, showSuccess } from '../../../untils/ShowToast';
 import { deleteBanner, getAllBanner } from '../../../api/banner/banner.api';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
 import { debounce } from 'lodash';
-import Search from 'antd/es/input/Search';
-import PageHeader from '../../../components/ui/PageHeader';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import ManagementPageShell from '../../../components/backoffice/ManagementPageShell';
 
 interface Banner {
     id: string;
@@ -116,39 +116,37 @@ export default function BannerManagement() {
     };
 
     return (
-        <div>
-            <PageHeader
+        <BackOfficePage>
+            <ManagementPageShell
                 title="Quản lý banner"
+                subtitle="Banner trang chủ và chiến dịch"
                 breadcrumbs={[{ title: 'Admin' }, { title: 'Banner' }]}
-                extra={
-                    <Search
-                        placeholder="Tìm kiếm theo tiêu đề, loại..."
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        style={{ width: 280 }}
-                        allowClear
+                onAdd={handleAdd}
+                addLabel="Thêm banner"
+                search={{
+                    placeholder: 'Tìm kiếm theo tiêu đề, loại...',
+                    value: keyword,
+                    onChange: setKeyword,
+                }}
+            >
+                {loading ? (
+                    <LoadingDefault />
+                ) : (
+                    <CustomTable<Banner>
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={data}
+                        pageSize={pageSize}
+                        currentPage={currentPage}
+                        total={total}
+                        scrollY={window.innerHeight - 300}
+                        onPageChange={handlePageChange}
+                        onView={handleView}
+                        onDelete={handleDelete}
+                        title=""
                     />
-                }
-            />
-            {loading ? (
-                <LoadingDefault />
-            ) : (
-                <CustomTable<Banner>
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={data}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    total={total}
-                    scrollY={window.innerHeight - 300}
-                    onPageChange={handlePageChange}
-                    onAdd={handleAdd}
-                    onView={handleView}
-                    onDelete={handleDelete}
-                />
-            )
-            }
-
-        </div>
+                )}
+            </ManagementPageShell>
+        </BackOfficePage>
     );
 }

@@ -5,18 +5,18 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Dropdown, Image, Button, theme, Flex } from 'antd';
+import { Layout, Menu, Dropdown, Image, Button } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import type { MenuProps } from 'antd';
 import { getMenuByRole } from './MenuIttem';
 import { getRoleIdState, resetLogin } from '../features/slices/app.slice';
-import logo from '../assets/img/logo_home.png';
+import logo from '../assets/img/logo.png';
 import person from '../assets/img/person.png';
 import { InfoUserState, resetUserState } from '../features/slices/user.slice';
 import '../css/layout/MainLayout.css';
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 
 interface MainLayoutProps {
   basePath: 'Admin' | 'Seller' | 'User';
@@ -24,9 +24,6 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ basePath }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
   const user = useSelector(InfoUserState);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,6 +31,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ basePath }) => {
 
   const roleId = useSelector(getRoleIdState);
   const menuItems = getMenuByRole(roleId);
+
+  const roleLabel = basePath === 'Admin' ? 'Admin' : 'Seller';
 
   const selectedKey = useMemo(() => {
     const parts = location.pathname.split('/').filter(Boolean);
@@ -65,19 +64,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ basePath }) => {
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout className="backoffice-layout">
+      <a href="#backoffice-main" className="skip-link">
+        Chuyển tới nội dung chính
+      </a>
       <Sider trigger={null} collapsible collapsed={collapsed} width={240}>
-        <div className="admin-layout__logo-wrap">
-          <img
-            src={logo}
-            alt="Logo"
-            style={{
-              width: collapsed ? 32 : 64,
-              height: collapsed ? 32 : 64,
-              objectFit: 'contain',
-              transition: 'all 0.3s ease',
-            }}
-          />
+        <div
+          className={`backoffice-layout__logo-wrap${collapsed ? ' backoffice-layout__logo-wrap--collapsed' : ''}`}
+        >
+          <img src={logo} alt="T2 SHOP" />
         </div>
         <Menu
           theme="dark"
@@ -88,7 +83,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ basePath }) => {
         />
       </Sider>
       <Layout>
-        <Header className="admin-layout__header" style={{ background: colorBgContainer }}>
+        <Header className="backoffice-layout__header">
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -96,32 +91,32 @@ const MainLayout: React.FC<MainLayoutProps> = ({ basePath }) => {
             aria-label={collapsed ? 'Mở sidebar' : 'Thu gọn sidebar'}
           />
           {user && (
-            <Flex gap={16} align="center">
-              <span className="admin-layout__user-greeting">
+            <div className="backoffice-layout__header-right">
+              <span className="backoffice-layout__role-badge">{roleLabel}</span>
+              <span className="backoffice-layout__user-greeting">
                 Xin chào, {user?.fullName || 'User'}
               </span>
               <Dropdown menu={{ items: dropdownItems }} placement="bottomRight" arrow>
-                <Image
-                  src={user.avatar || person}
-                  alt="Avatar người dùng"
-                  preview={false}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    cursor: 'pointer',
-                  }}
-                />
+                <div className="backoffice-layout__user-chip">
+                  <Image
+                    src={user.avatar || person}
+                    alt="Avatar người dùng"
+                    preview={false}
+                    width={40}
+                    height={40}
+                    style={{ objectFit: 'cover' }}
+                  />
+                </div>
               </Dropdown>
-            </Flex>
+            </div>
           )}
         </Header>
-        <Content className="admin-layout__content">
-          <main>
-            <Outlet />
-          </main>
+        <Content id="backoffice-main" className="backoffice-layout__content" role="main">
+          <Outlet />
         </Content>
+        <Footer className="backoffice-layout__footer">
+          T2 SHOP · Bảng quản trị
+        </Footer>
       </Layout>
     </Layout>
   );

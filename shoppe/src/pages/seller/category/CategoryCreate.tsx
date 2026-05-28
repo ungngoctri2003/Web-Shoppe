@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import DynamicForm, { type Field } from '../../../components/DynamicForm';
 import { showError, showSuccess } from '../../../untils/ShowToast';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
 import { useNavigate } from 'react-router-dom';
 import { createCategory, getAllCategories } from '../../../api/category/category.api';
 
@@ -102,14 +104,20 @@ export default function CategoryCreate() {
     };
 
     return (
-        <div>
-            <h2>Thêm danh mục</h2>
-            <DynamicForm
-                fields={fields}
-                onSubmit={handleSubmit}
-                formRef={formRef}
-                loading={loading}
-            />
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Thêm danh mục"
+                eyebrow="Danh mục"
+                breadcrumbs={[{ title: 'Seller' }, { title: 'Danh mục' }, { title: 'Thêm mới' }]}
+                backTo="/seller/category"
+            >
+                <DynamicForm
+                    fields={fields}
+                    onSubmit={handleSubmit}
+                    formRef={formRef}
+                    loading={loading}
+                />
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

@@ -1,32 +1,101 @@
-.containerBanner {
+.banner-slider {
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  min-height: inherit;
   border-radius: var(--radius-lg);
-  aspect-ratio: 16 / 6;
-  min-height: 180px;
+  overflow: hidden;
+  line-height: 0;
+  box-shadow: var(--shadow-md);
 }
 
-@media (min-width: 768px) {
-  .containerBanner {
-    aspect-ratio: auto;
-    min-height: 280px;
-  }
+.banner-slider .slick-slider,
+.banner-slider .slick-list,
+.banner-slider .slick-track,
+.banner-slider .slick-slide,
+.banner-slider .slick-slide > div {
+  height: 100%;
 }
 
-.bannerItem {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.banner-slide {
+  position: relative;
+  display: block !important;
   width: 100%;
   height: 100%;
-  min-height: 180px;
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  min-height: inherit;
+  overflow: hidden;
+  background: var(--color-neutral-200);
+}
+
+.banner-slide__link {
+  display: block;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
 }
 
-@media (min-width: 768px) {
-  .bannerItem {
-    min-height: 280px;
-  }
+.banner-slide__link[role='link']:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+
+.banner-slide__img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.45s ease;
+}
+
+.banner-slide:hover .banner-slide__img {
+  transform: scale(1.04);
+}
+
+.banner-slider .slick-dots {
+  bottom: 14px;
+  margin: 0;
+}
+
+.banner-slider .slick-dots li {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+}
+
+.banner-slider .slick-dots li button {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.55);
+  opacity: 1;
+}
+
+.banner-slider .slick-dots li.slick-active button {
+  width: 22px;
+  border-radius: var(--radius-full);
+  background: #fff;
+}
+
+.banner-slider .slick-dots li button::before {
+  display: none;
+}
+
+.banner-slider .slick-arrow {
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.banner-slider:hover .slick-arrow {
+  opacity: 1;
+}
+
+.banner-slider .slick-prev {
+  left: 12px;
+}
+
+.banner-slider .slick-next {
+  right: 12px;
 }

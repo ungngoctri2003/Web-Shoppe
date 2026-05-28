@@ -11,6 +11,26 @@
   }
 }
 
+.home-reveal--visible .service-strip__item {
+  animation: service-strip-in 0.5s cubic-bezier(0.34, 1.1, 0.64, 1) backwards;
+}
+
+.home-reveal--visible .service-strip__item:nth-child(1) { animation-delay: 0.05s; }
+.home-reveal--visible .service-strip__item:nth-child(2) { animation-delay: 0.12s; }
+.home-reveal--visible .service-strip__item:nth-child(3) { animation-delay: 0.19s; }
+.home-reveal--visible .service-strip__item:nth-child(4) { animation-delay: 0.26s; }
+
+@keyframes service-strip-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .service-strip__item {
   display: flex;
   align-items: center;

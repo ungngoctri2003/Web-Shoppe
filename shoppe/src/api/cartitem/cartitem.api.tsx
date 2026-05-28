@@ -20,12 +20,19 @@ export const removeCartItem = (id: string) => {
     const url = `/CartItem/removeCartItem?cartItemId=${id}`;
     return axiosClient.delete(url);
 };
-export const toggleCartItemSelection = (productId: string, isSelected: boolean, productVariantId?: string | null) => {
-    return axiosClient.post('/CartItem/toggle-selection', {
+export const toggleCartItemSelection = (
+    productId: string,
+    isSelected: boolean,
+    productVariantId?: string | null
+) => {
+    const params = new URLSearchParams({
         productId,
-        isSelected,
-        productVariantId: productVariantId || null,
+        isSelected: String(isSelected),
     });
+    if (productVariantId) {
+        params.set('productVariantId', productVariantId);
+    }
+    return axiosClient.post(`/CartItem/toggle-selection?${params.toString()}`);
 };
 export const toggleSelectAllCart = () => {
     return axiosClient.post('/CartItem/toggle-select-all');

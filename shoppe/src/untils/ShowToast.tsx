@@ -1,4 +1,7 @@
 import { message } from 'antd';
+import type { MessageInstance } from 'antd/es/message/interface';
+
+let messageApi: MessageInstance | null = null;
 
 message.config({
   top: 24,
@@ -6,14 +9,26 @@ message.config({
   maxCount: 3,
 });
 
+export function setMessageApi(api: MessageInstance) {
+  messageApi = api;
+}
+
+function getMessage() {
+  return messageApi ?? message;
+}
+
 export const showSuccess = (msg: string) => {
-  message.success(msg);
+  getMessage().success(msg);
 };
 
 export const showError = (msg: string) => {
-  message.error(msg);
+  getMessage().error(msg);
 };
 
 export const showWarning = (msg: string) => {
-  message.warning(msg);
+  getMessage().warning(msg);
+};
+
+export const showInfo = (msg: string) => {
+  getMessage().info(msg);
 };

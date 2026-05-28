@@ -1,0 +1,43 @@
+.management-shell__toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.management-shell__search {
+  width: min(100%, 280px);
+}
+
+.management-shell__table {
+  padding: var(--space-4);
+  background: var(--color-bg-container);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.management-shell__table .backoffice-table.ant-card {
+  border: none;
+  box-shadow: none;
+}
+
+.management-shell__table .backoffice-table .ant-card-body {
+  padding: 0;
+}
+
+.management-shell__table .backoffice-table .ant-card-head {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .management-shell__toolbar-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .management-shell__search {
+    width: 100%;
+  }
+}

@@ -19,7 +19,14 @@ const ProtectedRoute = ({
   }
 
   if (!token || !stateApp.role_id) {
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+    const returnPath = location.pathname + location.search;
+    return (
+      <Navigate
+        to={`/auth/login?returnUrl=${encodeURIComponent(returnPath)}`}
+        state={{ from: returnPath }}
+        replace
+      />
+    );
   }
 
   if (!allowedRoles.includes(stateApp.role_id)) {

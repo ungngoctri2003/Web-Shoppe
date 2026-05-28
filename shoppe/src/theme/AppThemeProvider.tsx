@@ -1,5 +1,6 @@
-import { ConfigProvider } from 'antd';
+import { App, ConfigProvider } from 'antd';
 import viVN from 'antd/locale/vi_VN';
+import AntdAppHolder from '../components/AntdAppHolder';
 import { antTheme } from './antTheme';
 
 interface AppThemeProviderProps {
@@ -9,7 +10,10 @@ interface AppThemeProviderProps {
 export default function AppThemeProvider({ children }: AppThemeProviderProps) {
   return (
     <ConfigProvider theme={antTheme} locale={viVN}>
-      {children}
+      <App>
+        <AntdAppHolder />
+        {children}
+      </App>
     </ConfigProvider>
   );
 }

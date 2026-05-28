@@ -10,10 +10,10 @@ import {
 } from '../../../api/category/category.api';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
 import { debounce } from 'lodash';
-import Search from 'antd/es/input/Search';
 import { useSelector } from 'react-redux';
 import { getTokenState } from '../../../features/slices/app.slice';
-import PageHeader from '../../../components/ui/PageHeader';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import ManagementPageShell from '../../../components/backoffice/ManagementPageShell';
 
 interface Category {
     id: string;
@@ -169,37 +169,35 @@ export default function CategoryManagement() {
 
     /* ===================== RENDER ===================== */
     return (
-        <div>
-            <PageHeader
+        <BackOfficePage>
+            <ManagementPageShell
                 title="Quản lý danh mục"
+                subtitle="Danh mục sản phẩm của shop"
                 breadcrumbs={[{ title: 'Seller' }, { title: 'Danh mục' }]}
-                extra={
-                    <Search
-                        placeholder="Tìm kiếm danh mục..."
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        style={{ width: 280 }}
-                        allowClear
+                onAdd={handleAdd}
+                search={{
+                    placeholder: 'Tìm kiếm danh mục...',
+                    value: keyword,
+                    onChange: setKeyword,
+                }}
+            >
+                {loading ? (
+                    <LoadingDefault />
+                ) : (
+                    <CustomTable<Category>
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={data}
+                        pageSize={pageSize}
+                        currentPage={currentPage}
+                        total={total}
+                        onPageChange={handlePageChange}
+                        onView={handleEdit}
+                        onDelete={handleDelete}
+                        title=""
                     />
-                }
-            />
-
-            {loading ? (
-                <LoadingDefault />
-            ) : (
-                <CustomTable<Category>
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={data}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    total={total}
-                    onAdd={handleAdd}
-                    onPageChange={handlePageChange}
-                    onView={handleEdit}
-                    onDelete={handleDelete}
-                />
-            )}
-        </div>
+                )}
+            </ManagementPageShell>
+        </BackOfficePage>
     );
 }

@@ -11,7 +11,10 @@ import {
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import Search from "antd/es/input/Search";
 import { showError, showSuccess } from "../../../untils/ShowToast";
-import PageHeader from "../../../components/ui/PageHeader";
+import BackOfficePage from "../../../components/backoffice/BackOfficePage";
+import ManagementPageShell from "../../../components/backoffice/ManagementPageShell";
+import RevealSection from "../../../components/ui/RevealSection";
+import "../../../css/components/backoffice/ProductManagementFilters.css";
 
 interface Product {
   id: string;
@@ -201,73 +204,51 @@ export default function ProductManagement() {
   };
 
 
-  return (
-    <div>
-      <Flex vertical gap={16}>
-        {/* Header */}
-        <PageHeader
-          title="Quản lý sản phẩm"
-          breadcrumbs={[{ title: 'Seller' }, { title: 'Sản phẩm' }]}
-          extra={
-            <Search
-              placeholder="Tìm kiếm theo tên, danh mục..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onSearch={handleSearch}
-              style={{ width: 300 }}
-              allowClear
-            />
-          }
-        />
-
-        {/* Filter Section */}
-        <Flex
-          align="center"
-          gap={12}
-          style={{
-            padding: "12px 16px",
-            background: "#fafafa",
-            borderRadius: 8,
-            border: "1px solid #f0f0f0",
-          }}
-        >
-          <Flex align="center" gap={8}>
-            <FilterOutlined style={{ color: "#1890ff", fontSize: 16 }} />
-            <span style={{ fontWeight: 500, color: "#595959" }}>Bộ lọc:</span>
-          </Flex>
-
-          {/* Filter trạng thái 3 loại */}
-          <Select
-            placeholder="Tất cả trạng thái"
-            allowClear
-            style={{ minWidth: 200 }}
-            value={filterStatus}
-            onChange={(val) => {
-              setFilterStatus(val);
-              setCurrentPage(1);
-            }}
-            suffixIcon={null}
-          >
-            <Select.Option value="active">
-              <Tag color="green" style={{ margin: 0 }}>
-                Hoạt động
-              </Tag>
-            </Select.Option>
-            <Select.Option value="inactive">
-              <Tag color="orange" style={{ margin: 0 }}>
-                Ngưng bán
-              </Tag>
-            </Select.Option>
-
-          </Select>
-
-          {/* Filter sellerStatus */}
-
-        </Flex>
+  const filterBar = (
+    <Flex align="center" gap={12} className="product-mgmt-filters" wrap="wrap">
+      <Flex align="center" gap={8}>
+        <FilterOutlined className="product-mgmt-filters__icon" />
+        <span className="product-mgmt-filters__label">Bộ lọc:</span>
       </Flex>
+      <Select
+        placeholder="Tất cả trạng thái"
+        allowClear
+        style={{ minWidth: 200 }}
+        value={filterStatus}
+        onChange={(val) => {
+          setFilterStatus(val);
+          setCurrentPage(1);
+        }}
+      >
+        <Select.Option value="active">
+          <Tag color="green" style={{ margin: 0 }}>
+            Hoạt động
+          </Tag>
+        </Select.Option>
+        <Select.Option value="inactive">
+          <Tag color="orange" style={{ margin: 0 }}>
+            Ngưng bán
+          </Tag>
+        </Select.Option>
+      </Select>
+    </Flex>
+  );
 
-      {/* Table */}
-      <div style={{ marginTop: 16 }}>
+  return (
+    <BackOfficePage>
+      <ManagementPageShell
+        title="Quản lý sản phẩm"
+        subtitle="Sản phẩm trong cửa hàng của bạn"
+        breadcrumbs={[{ title: 'Seller' }, { title: 'Sản phẩm' }]}
+        onAdd={handleAdd}
+        search={{
+          placeholder: 'Tìm kiếm theo tên, danh mục...',
+          value: searchValue,
+          onChange: setSearchValue,
+          onSearch: handleSearch,
+        }}
+      >
+        <RevealSection delay={0}>{filterBar}</RevealSection>
         {loading ? (
           <LoadingDefault />
         ) : (
@@ -279,12 +260,12 @@ export default function ProductManagement() {
             currentPage={currentPage}
             total={total}
             onPageChange={handlePageChange}
-            onAdd={handleAdd}
             onView={handleView}
             onDelete={handleDelete}
+            title=""
           />
         )}
-      </div>
-    </div>
+      </ManagementPageShell>
+    </BackOfficePage>
   );
 }

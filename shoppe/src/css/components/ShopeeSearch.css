@@ -42,7 +42,7 @@
   justify-content: center;
   width: 52px;
   border: none;
-  background: #f5a623;
+  background: var(--color-primary-500);
   color: var(--color-on-primary);
   font-size: 18px;
   cursor: pointer;
@@ -50,11 +50,11 @@
 }
 
 .shopee-search__submit:hover {
-  background: #e89510;
+  background: var(--color-primary-600);
 }
 
 .shopee-search__submit:active {
-  background: #d4840d;
+  background: var(--color-primary-700);
 }
 
 .shopee-search__dropdown {

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import DynamicForm, { type Field } from '../../../components/DynamicForm';
 import { inserProduct } from '../../../api/product/product.api';
 import { showError, showSuccess } from '../../../untils/ShowToast';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
 import { useNavigate } from 'react-router-dom';
 import { getAllCategories } from '../../../api/category/category.api';
 
@@ -173,15 +175,22 @@ export default function ProductsCreate() {
     };
 
     return (
-        <div>
-            <h2 style={{ marginBottom: 24 }}>🛒 Thêm sản phẩm mới</h2>
-            <DynamicForm
-                fields={fields}
-                onSubmit={handleSubmit}
-                formRef={formRef}
-                loading={loading}
-                submitText="Thêm sản phẩm"
-            />
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Thêm sản phẩm"
+                subtitle="Đăng sản phẩm mới lên cửa hàng"
+                eyebrow="Sản phẩm"
+                breadcrumbs={[{ title: 'Seller' }, { title: 'Sản phẩm' }, { title: 'Thêm mới' }]}
+                backTo="/seller/products"
+            >
+                <DynamicForm
+                    fields={fields}
+                    onSubmit={handleSubmit}
+                    formRef={formRef}
+                    loading={loading}
+                    submitText="Thêm sản phẩm"
+                />
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

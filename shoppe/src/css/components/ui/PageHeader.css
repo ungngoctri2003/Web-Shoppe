@@ -7,12 +7,44 @@
   box-shadow: var(--shadow-sm);
 }
 
+.page-header--rich {
+  border-top: 3px solid var(--color-primary-500);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(
+    180deg,
+    var(--color-primary-50) 0%,
+    var(--color-bg-container) 48%
+  );
+}
+
+.page-header__breadcrumb {
+  margin-bottom: var(--space-2) !important;
+}
+
+.page-header__eyebrow {
+  display: inline-block;
+  font-size: var(--font-size-caption);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-primary-500);
+  margin-bottom: var(--space-1);
+}
+
 .page-header__title.ant-typography {
   font-size: var(--font-size-h3) !important;
   font-weight: 700 !important;
 }
 
+.page-header--rich .page-header__title.ant-typography {
+  font-size: var(--font-size-h2) !important;
+}
+
 .page-header__subtitle {
   display: block;
   margin-top: var(--space-1);
+}
+
+.page-header__extra {
+  flex-shrink: 0;
 }

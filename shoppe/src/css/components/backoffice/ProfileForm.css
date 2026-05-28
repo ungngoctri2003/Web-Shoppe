@@ -1,0 +1,9 @@
+.profile-form-card {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.profile-form-card .ant-card-body {
+  padding: 0;
+}

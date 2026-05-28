@@ -1,7 +1,10 @@
 @import './theme/tokens.css';
+@import './css/components/ui/Reveal.css';
 @import './css/components/ui/PageShell.css';
 @import './css/layout/UserStorefront.css';
 @import './css/components/ui/PageHeader.css';
+@import './css/components/backoffice/BackofficeTable.css';
+@import './css/layout/BackOfficePage.css';
 
 *,
 *::before,

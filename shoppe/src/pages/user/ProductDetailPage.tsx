@@ -5,12 +5,12 @@ import {
   Button,
   Input,
   Image,
-  message,
   Typography,
   Divider,
   Avatar,
   Radio,
   Skeleton,
+  Space,
 } from 'antd';
 import { ArrowLeftOutlined, ShopFilled, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +21,14 @@ import InfoRowDetail from './components/InfoRowDetail';
 import PageContainer from '../../components/ui/PageContainer';
 import '../../css/pages/ProductDetail.css';
 import { setCart } from '../../features/slices/cart.slice';
-import { showSuccess } from '../../untils/ShowToast';
+import { showError, showSuccess, showWarning } from '../../untils/ShowToast';
+import {
+  addGuestCartItem,
+  buildCartStateFromGuest,
+  buildGuestCartItemFromProduct,
+} from '../../services/guestCart';
+import { normalizeCartApiResponse } from '../../services/cartNormalize';
+import { fetchServerCart } from '../../services/cartSync';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -34,7 +41,8 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState<string>('');
 
-  const token = useSelector(getTokenState);
+  const tokenFromStore = useSelector(getTokenState);
+  const token = tokenFromStore || localStorage.getItem('access_token');
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -75,19 +83,24 @@ const ProductDetailPage = () => {
   const decreaseQuantity = () => handleChangeQuantity(quantity - 1);
 
   const handleAddToCart = async () => {
-    if (!token) return navigate('/auth/login');
-
     const hasVariants = !!product?.productVariants?.length;
     if ((hasVariants && !selectedVariantId) || quantity <= 0) {
-      message.warning('Vui lòng chọn phân loại và số lượng hợp lệ');
+      showWarning('Vui lòng chọn phân loại và số lượng hợp lệ');
+      return;
+    }
+
+    const variant = hasVariants
+      ? product.productVariants.find((v: any) => v.id === selectedVariantId)
+      : null;
+
+    if (!token) {
+      addGuestCartItem(buildGuestCartItemFromProduct(product, variant, quantity));
+      dispatch(setCart(buildCartStateFromGuest()));
+      showSuccess('Đã thêm vào giỏ hàng!');
       return;
     }
 
     try {
-      const variant = hasVariants
-        ? product.productVariants.find((v: any) => v.id === selectedVariantId)
-        : null;
-
       const payload = {
         productId: product.id,
         productName: product.productName,
@@ -105,30 +118,35 @@ const ProductDetailPage = () => {
       };
 
       const res: any = await createCartItem(payload);
-      if (res.success) {
-        dispatch(setCart(res));
+      if (res?.success ?? res?.data) {
+        dispatch(setCart(normalizeCartApiResponse(res)));
+        showSuccess('Đã thêm vào giỏ hàng!');
+      } else {
+        await fetchServerCart(dispatch);
         showSuccess('Đã thêm vào giỏ hàng!');
       }
     } catch (err: any) {
-      message.error(err?.response?.data?.message || 'Không thể thêm vào giỏ hàng');
+      showError(err?.response?.data?.message || 'Không thể thêm vào giỏ hàng');
     }
   };
 
-  const handleBuyNow = () => {
-    if (!token) {
-      navigate('/auth/login');
-      return;
-    }
-
+  const handleBuyNow = async () => {
     const hasVariants = !!product?.productVariants?.length;
     if ((hasVariants && !selectedVariantId) || quantity <= 0) {
-      message.warning('Vui lòng chọn phân loại và số lượng hợp lệ');
+      showWarning('Vui lòng chọn phân loại và số lượng hợp lệ');
       return;
     }
 
     const variant = hasVariants
       ? product.productVariants.find((v: any) => v.id === selectedVariantId)
       : null;
+
+    if (!token) {
+      addGuestCartItem(buildGuestCartItemFromProduct(product, variant, quantity));
+      dispatch(setCart(buildCartStateFromGuest()));
+      navigate('/user/cart');
+      return;
+    }
 
     const selectedItem = {
       id: product.id,
@@ -264,7 +282,7 @@ const ProductDetailPage = () => {
 
             <div className="pdp__field">
               <div className="pdp__field-label">Số lượng</div>
-              <Button.Group>
+              <Space.Compact>
                 <Button onClick={decreaseQuantity} disabled={quantity <= 1}>
                   -
                 </Button>
@@ -276,7 +294,7 @@ const ProductDetailPage = () => {
                 <Button onClick={increaseQuantity} disabled={quantity >= stockMax}>
                   +
                 </Button>
-              </Button.Group>
+              </Space.Compact>
             </div>
 
             <div className="pdp__desktop-actions">

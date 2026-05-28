@@ -15,7 +15,9 @@ function LoadingDefault() {
         padding: 'var(--space-6)',
       }}
     >
-      <Spin size="large" tip="Đang tải..." />
+      <Spin size="large" tip="Đang tải...">
+        <div style={{ minHeight: 64, minWidth: 120 }} aria-hidden />
+      </Spin>
     </div>
   );
 }

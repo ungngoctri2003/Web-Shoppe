@@ -8,6 +8,8 @@ import { getAllCategories } from "../../../api/category/category.api";
 import { showError, showSuccess } from "../../../untils/ShowToast";
 import VariantsForm from "../../../components/VariantsForm";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
+import BackOfficePage from "../../../components/backoffice/BackOfficePage";
+import FormPageShell from "../../../components/backoffice/FormPageShell";
 
 export default function ProductEdit() {
   const { id } = useParams();
@@ -273,53 +275,56 @@ export default function ProductEdit() {
     }
   };
 
+  const actionFooter = (
+    <Space size="middle">
+      <Button
+        type="primary"
+        size="large"
+        loading={loadingSubmit}
+        onClick={handleFormSubmit}
+        style={{ minWidth: 160 }}
+      >
+        Cập nhật
+      </Button>
+      <Button
+        size="large"
+        style={{ minWidth: 160 }}
+        onClick={() => navigate('/seller/products')}
+        disabled={loadingSubmit}
+      >
+        Hủy
+      </Button>
+    </Space>
+  );
+
   return (
-    <div>
-      <h2 style={{ marginBottom: 16 }}>Cập nhật sản phẩm</h2>
-      {!isLoading ? (
-        <>
-          <DynamicForm
-            formRef={formRef}
-            fields={fields}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            submitText="Cập nhật"
-            isEdit
-            loading={loadingSubmit}
-            hideButtons={true}
-          />
-          <VariantsForm value={variants} onChange={setVariants} />
-
-          {/* Nút xác nhận ở cuối */}
-          <Flex justify="center" style={{ marginTop: 32, marginBottom: 32 }}>
-            <Space size="middle">
-              <Button
-                type="primary"
-                size="large"
-                loading={loadingSubmit}
-                onClick={handleFormSubmit}
-                style={{ minWidth: 160 }}
-              >
-                Cập nhật
-              </Button>
-
-              <Button
-                type="default"
-                size="large"
-                style={{ minWidth: 160 }}
-                onClick={() => navigate(-1)}
-                disabled={loadingSubmit}
-              >
-                Hủy
-              </Button>
-            </Space>
+    <BackOfficePage narrow>
+      <FormPageShell
+        title="Cập nhật sản phẩm"
+        eyebrow="Sản phẩm"
+        breadcrumbs={[{ title: 'Seller' }, { title: 'Sản phẩm' }, { title: 'Chỉnh sửa' }]}
+        footer={actionFooter}
+      >
+        {!isLoading ? (
+          <>
+            <DynamicForm
+              formRef={formRef}
+              fields={fields}
+              initialValues={initialValues}
+              onSubmit={handleSubmit}
+              submitText="Cập nhật"
+              isEdit
+              loading={loadingSubmit}
+              hideButtons={true}
+            />
+            <VariantsForm value={variants} onChange={setVariants} />
+          </>
+        ) : (
+          <Flex justify="center" style={{ marginTop: '5%' }}>
+            <LoadingDefault />
           </Flex>
-        </>
-      ) : (
-        <Flex justify="center" style={{ marginTop: "5%" }}>
-          <LoadingDefault />
-        </Flex>
-      )}
-    </div>
+        )}
+      </FormPageShell>
+    </BackOfficePage>
   );
 }

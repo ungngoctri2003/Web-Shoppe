@@ -3,6 +3,7 @@ import axios from "axios";
 import { resetLogin } from "../features/slices/app.slice";
 import { store } from "../features/store";
 import { APP_URL } from "../constants/Url";
+import { setLoginRedirect } from "../untils/loginRedirect";
 
 const handleRequest = (config: any) => {
     const storeState = store.getState();
@@ -38,7 +39,9 @@ const handleResponseError = async (error: any) => {
 
         // ⚠️ Tránh redirect vòng lặp nếu đang ở chính trang login
         if (!window.location.pathname.startsWith('/auth/login')) {
-            window.location.href = "/auth/login";
+            const returnPath = window.location.pathname + window.location.search;
+            setLoginRedirect(returnPath);
+            window.location.href = `/auth/login?returnUrl=${encodeURIComponent(returnPath)}`;
         }
 
         return;

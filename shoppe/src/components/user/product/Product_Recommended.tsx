@@ -6,7 +6,11 @@ import ProductCard from '../../ui/ProductCard';
 import EmptyState from '../../ui/EmptyState';
 import '../../../css/ProductCard.css';
 
-function ProductRecommended() {
+type ProductRecommendedProps = {
+  staggerAnimate?: boolean;
+};
+
+function ProductRecommended({ staggerAnimate = false }: ProductRecommendedProps) {
   const navigate = useNavigate();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,7 +64,7 @@ function ProductRecommended() {
 
   return (
     <div style={{ width: '100%' }}>
-      <div className="product-grid">
+      <div className={['product-grid', staggerAnimate ? 'product-grid--stagger' : ''].filter(Boolean).join(' ')}>
         {products.map((product) => (
           <ProductCard
             key={product.id}

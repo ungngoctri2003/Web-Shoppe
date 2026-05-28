@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ProductAPI.Constant;
 
 public class RegisterRequestDTO
 {
@@ -6,10 +7,8 @@ public class RegisterRequestDTO
     [EmailAddress(ErrorMessage = "Email không hợp lệ")]
     public string Email { get; set; }
 
-    [Required(ErrorMessage = "Password là bắt buộc")]
-    [MinLength(8, ErrorMessage = "Password phải có ít nhất 8 ký tự")]
-    [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$",
-        ErrorMessage = "Password phải có ít nhất 8 ký tự, chứa 1 chữ hoa, 1 số và 1 ký tự đặc biệt")]
+    [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
+    [MinLength(Constants.PasswordMinLength, ErrorMessage = Constants.PasswordMinLengthMessage)]
     public string Password { get; set; }
 
     public string? Username { get; set; }

@@ -34,6 +34,11 @@ namespace ProductAPI.Services
                 return MethodResult<LoginResponseDTO>.ResultWithError("Email hoặc mật khẩu không được để trống.");
             }
 
+            if (request.Password.Length < Constants.PasswordMinLength)
+            {
+                return MethodResult<LoginResponseDTO>.ResultWithError(Constants.PasswordMinLengthMessage);
+            }
+
             var user = await _userRepo.TableNoTracking.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user == null)
             {
@@ -61,6 +66,11 @@ namespace ProductAPI.Services
 
         public async Task<IMethodResult<bool>> RegisterUserAsync(RegisterRequestDTO request)
         {
+            if (string.IsNullOrEmpty(request.Password) || request.Password.Length < Constants.PasswordMinLength)
+            {
+                return MethodResult<bool>.ResultWithError(Constants.PasswordMinLengthMessage);
+            }
+
             var existingUser = await _userRepo.TableNoTracking
                             .FirstOrDefaultAsync(u => u.Email == request.Email || u.Phone == request.Phone);
 
@@ -99,6 +109,11 @@ namespace ProductAPI.Services
          }
         public async Task<IMethodResult<bool>> RegisterByAdminAsync(RegisterRequestDTO request)
         {
+            if (string.IsNullOrEmpty(request.Password) || request.Password.Length < Constants.PasswordMinLength)
+            {
+                return MethodResult<bool>.ResultWithError(Constants.PasswordMinLengthMessage);
+            }
+
             var currentRole = _userPrincipalService.GetRoleUser();
             if (currentRole != Constants.ROLE_ADMIN)
             {
@@ -173,6 +188,11 @@ namespace ProductAPI.Services
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(newPassword))
             {
                 return MethodResult<bool>.ResultWithError("Email hoặc mật khẩu không được để trống.");
+            }
+
+            if (newPassword.Length < Constants.PasswordMinLength)
+            {
+                return MethodResult<bool>.ResultWithError(Constants.PasswordMinLengthMessage);
             }
 
             var user = await _userRepo.TableNoTracking

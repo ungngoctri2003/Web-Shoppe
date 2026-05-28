@@ -12,29 +12,44 @@ export interface BreadcrumbItem {
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   breadcrumbs?: BreadcrumbItem[];
   extra?: ReactNode;
+  variant?: 'default' | 'rich';
 }
 
 export default function PageHeader({
   title,
   subtitle,
+  eyebrow,
   breadcrumbs,
   extra,
+  variant = 'default',
 }: PageHeaderProps) {
+  const isRich = variant === 'rich';
+
   return (
-    <div className="page-header">
+    <div className={`page-header${isRich ? ' page-header--rich' : ''}`}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumb
-          style={{ marginBottom: 'var(--space-2)' }}
+          className="page-header__breadcrumb"
           items={breadcrumbs.map((b) => ({
             title: b.href ? <a href={b.href}>{b.title}</a> : b.title,
           }))}
         />
       )}
       <Flex justify="space-between" align="flex-start" wrap="wrap" gap={16}>
-        <div>
-          <Title level={4} className="page-header__title" style={{ margin: 0 }}>
+        <div className="page-header__main">
+          {(eyebrow || isRich) && (
+            <span className="page-header__eyebrow">
+              {eyebrow ?? breadcrumbs?.[breadcrumbs.length - 1]?.title}
+            </span>
+          )}
+          <Title
+            level={isRich ? 3 : 4}
+            className="page-header__title"
+            style={{ margin: 0 }}
+          >
             {title}
           </Title>
           {subtitle && (
@@ -43,7 +58,7 @@ export default function PageHeader({
             </Typography.Text>
           )}
         </div>
-        {extra && <div>{extra}</div>}
+        {extra && <div className="page-header__extra">{extra}</div>}
       </Flex>
     </div>
   );

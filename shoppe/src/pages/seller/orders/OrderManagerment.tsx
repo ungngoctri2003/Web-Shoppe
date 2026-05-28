@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import CustomTable from "../../../components/CustomTable";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
 import { getUserOrders, getUserOrdersOfSeller } from "../../../api/order/order.api";
-import PageHeader from "../../../components/ui/PageHeader";
+import BackOfficePage from "../../../components/backoffice/BackOfficePage";
+import ManagementPageShell from "../../../components/backoffice/ManagementPageShell";
 
 interface Order {
     id: string;
@@ -149,20 +150,17 @@ const OrderManagement = () => {
 
 
     return (
-        <div>
-            <PageHeader
+        <BackOfficePage>
+            <ManagementPageShell
                 title="Quản lý đơn hàng"
+                subtitle="Theo dõi và xử lý đơn hàng"
                 breadcrumbs={[{ title: 'Seller' }, { title: 'Đơn hàng' }]}
-                extra={
-                    <Search
-                        placeholder="Tìm mã đơn, người đặt..."
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        style={{ width: 280 }}
-                        allowClear
-                    />
-                }
-            />
+                search={{
+                    placeholder: 'Tìm mã đơn, người đặt...',
+                    value: keyword,
+                    onChange: setKeyword,
+                }}
+            >
             {loading ? (
                 <LoadingDefault />
             ) : (
@@ -174,10 +172,11 @@ const OrderManagement = () => {
                     currentPage={currentPage}
                     total={total}
                     onPageChange={(page) => fetchOrders(page, keyword)}
-                // onDelete={handleDelete}
+                    title=""
                 />
             )}
-        </div>
+            </ManagementPageShell>
+        </BackOfficePage>
     );
 };
 

@@ -6,6 +6,8 @@ import { showSuccess } from '../../../untils/ShowToast';
 import { useGetDetailPromotionQuery } from '../../../api/promotion/promotion.query';
 import { updatePromotion } from '../../../api/promotion/promotion.api';
 import dayjs from 'dayjs';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
 
 export default function PromotionEdit() {
     const { id } = useParams();
@@ -230,24 +232,29 @@ export default function PromotionEdit() {
     };
 
     return (
-        <div>
-            <h2 style={{ marginBottom: 16 }}>Cập nhật mã khuyến mãi</h2>
-
-            {!isLoading ? (
-                <DynamicForm
-                    formRef={formRef}
-                    fields={fields}
-                    initialValues={initialValues}
-                    onSubmit={handleSubmit}
-                    submitText="Cập nhật"
-                    isEdit
-                    loading={loadingSubmit}
-                />
-            ) : (
-                <Flex justify="center" style={{ marginTop: '5%' }}>
-                    <Spin />
-                </Flex>
-            )}
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Cập nhật khuyến mãi"
+                eyebrow="Khuyến mãi"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Khuyến mãi' }, { title: 'Chỉnh sửa' }]}
+                backTo="/admin/promotions"
+            >
+                {!isLoading ? (
+                    <DynamicForm
+                        formRef={formRef}
+                        fields={fields}
+                        initialValues={initialValues}
+                        onSubmit={handleSubmit}
+                        submitText="Cập nhật"
+                        isEdit
+                        loading={loadingSubmit}
+                    />
+                ) : (
+                    <Flex justify="center" style={{ marginTop: '5%' }}>
+                        <Spin />
+                    </Flex>
+                )}
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

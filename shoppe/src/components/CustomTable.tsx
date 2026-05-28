@@ -121,6 +121,7 @@ function CustomTable<T extends object>({
 
   return (
     <Card
+      className="backoffice-table"
       title={title}
       extra={
         onAdd && (
@@ -129,7 +130,6 @@ function CustomTable<T extends object>({
           </Button>
         )
       }
-      style={{ borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)' }}
     >
       <Table<T>
         rowKey={rowKey}

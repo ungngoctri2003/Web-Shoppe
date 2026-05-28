@@ -4,6 +4,8 @@ import { showError, showSuccess } from '../../../untils/ShowToast';
 import { useNavigate } from 'react-router-dom';
 import { createPromotion } from '../../../api/promotion/promotion.api';
 import dayjs from 'dayjs';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
 
 export default function PromotionCreate() {
     const formRef = useRef<any>(null);
@@ -186,15 +188,22 @@ export default function PromotionCreate() {
     };
 
     return (
-        <div>
-            <h2 style={{ marginBottom: 24 }}>🛒 Thêm mã giảm giá mới</h2>
-            <DynamicForm
-                fields={fields}
-                onSubmit={handleSubmit}
-                formRef={formRef}
-                loading={loading}
-                submitText="Thêm mã giảm giá"
-            />
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Thêm khuyến mãi"
+                subtitle="Tạo mã giảm giá mới"
+                eyebrow="Khuyến mãi"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Khuyến mãi' }, { title: 'Thêm mới' }]}
+                backTo="/admin/promotions"
+            >
+                <DynamicForm
+                    fields={fields}
+                    onSubmit={handleSubmit}
+                    formRef={formRef}
+                    loading={loading}
+                    submitText="Thêm mã giảm giá"
+                />
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

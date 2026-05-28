@@ -18,22 +18,22 @@ function StatisticDashboardSeller() {
             title: "Sản phẩm",
             value: data?.data?.totalProducts,
             prefix: <ShopOutlined />,
-            color: "#1890ff",
-            path: "/Seller/products",
+            path: "/seller/products",
+            color: "var(--color-primary-500)",
         },
         {
             title: "Danh mục",
             value: data?.data?.totalCategories,
             prefix: <AppstoreOutlined />,
-            color: "#722ed1",
-            path: '/Seller/category'
+            color: "var(--color-secondary-500)",
+            path: "/seller/category",
         },
         {
             title: "Đơn hàng",
             value: data?.data?.totalOrders,
             prefix: <UnorderedListOutlined />,
-            color: "#d1982eff",
-            path: '/Seller/orders'
+            color: "var(--color-warning)",
+            path: "/seller/orders",
         },
     ];
     return <DashboardStatistic data={statisticData} loading={isLoading} />;

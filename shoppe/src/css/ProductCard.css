@@ -14,7 +14,7 @@
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: rgba(238, 77, 45, 0.35);
+  border-color: rgba(var(--color-primary-rgb), 0.35);
 }
 
 .product-card:focus-visible {
@@ -45,7 +45,7 @@
 }
 
 .product-card__badge--hot {
-  background: linear-gradient(90deg, #ff6b4a, #ee4d2d);
+  background: linear-gradient(90deg, var(--color-primary-400), var(--color-primary-500));
 }
 
 .product-card__meta {

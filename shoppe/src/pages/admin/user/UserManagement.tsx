@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { deleteSeller } from "../../../api/seller/seller.api";
 import { showError, showSuccess, showWarning } from "../../../untils/ShowToast";
 import LoadingDefault from "../../../components/loading/LoadingDefault";
-import Search from "antd/es/input/Search";
-import PageHeader from "../../../components/ui/PageHeader";
+import BackOfficePage from "../../../components/backoffice/BackOfficePage";
+import ManagementPageShell from "../../../components/backoffice/ManagementPageShell";
 import { getAllUser } from "../../../api/user.api";
 import { ToggleLock } from "../../../api/auth.api";
 
@@ -131,37 +131,36 @@ export default function UserManagement() {
   };
 
   return (
-    <div>
-      <PageHeader
+    <BackOfficePage>
+      <ManagementPageShell
         title="Quản lý người dùng"
+        subtitle="Danh sách tài khoản khách hàng"
         breadcrumbs={[{ title: 'Admin' }, { title: 'Người dùng' }]}
-        extra={
-          <Search
-            placeholder="Tìm kiếm theo tên, email..."
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onSearch={handleSearch}
-            style={{ width: 280 }}
-            allowClear
+        search={{
+          placeholder: 'Tìm kiếm theo tên, email...',
+          value: searchValue,
+          onChange: setSearchValue,
+          onSearch: handleSearch,
+        }}
+      >
+        {loading ? (
+          <LoadingDefault />
+        ) : (
+          <CustomTable<Seller>
+            rowKey="id"
+            columns={columns}
+            dataSource={data}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            total={total}
+            onPageChange={handlePageChange}
+            onDelete={handleDelete}
+            onToggleLock={handleToggleLock}
+            lockStatusKey="isLocked"
+            title=""
           />
-        }
-      />
-      {loading ? (
-        <LoadingDefault />
-      ) : (
-        <CustomTable<Seller>
-          rowKey="id"
-          columns={columns}
-          dataSource={data}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          total={total}
-          onPageChange={handlePageChange}
-          onDelete={handleDelete}
-          onToggleLock={handleToggleLock}
-          lockStatusKey="isLocked"
-        />
-      )}
-    </div>
+        )}
+      </ManagementPageShell>
+    </BackOfficePage>
   );
 }

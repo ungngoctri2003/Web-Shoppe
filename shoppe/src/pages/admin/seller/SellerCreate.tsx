@@ -4,6 +4,9 @@ import { RegisterbyAdmin } from '../../../api/auth.api';
 import { showError, showSuccess } from '../../../untils/ShowToast';
 import { useNavigate } from 'react-router-dom';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
+import { passwordRules } from '../../../constants/authValidation';
 
 export default function SellerCreate() {
     const formRef = useRef<any>(null); // ✅ khai báo đúng kiểu có thể null ban đầu
@@ -20,14 +23,7 @@ export default function SellerCreate() {
             name: 'password',
             label: 'Mật khẩu',
             type: 'password',
-            rules: [
-                { required: true, message: 'Vui lòng nhập mật khẩu' },
-                {
-                    pattern: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+=\-])[A-Za-z\d@$!%*?&#^()_+=\-]{8,}$/,
-                    message:
-                        'Mật khẩu phải có ít nhất 8 ký tự, gồm 1 chữ hoa, 1 số và 1 ký tự đặc biệt',
-                },
-            ],
+            rules: passwordRules,
         },
         {
             name: 'username', label: 'Tên người bán', type: 'text', rules: [
@@ -62,13 +58,20 @@ export default function SellerCreate() {
     };
 
     return (
-        <div>
-            <h2>Thêm người bán</h2>
-            {loading ? (
-                <LoadingDefault />
-            ) :
-
-                (<DynamicForm fields={fields} onSubmit={handleSubmit} formRef={formRef} />)}
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Thêm người bán"
+                subtitle="Tạo tài khoản người bán mới"
+                eyebrow="Người bán"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Người bán' }, { title: 'Thêm mới' }]}
+                backTo="/admin/seller"
+            >
+                {loading ? (
+                    <LoadingDefault />
+                ) : (
+                    <DynamicForm fields={fields} onSubmit={handleSubmit} formRef={formRef} />
+                )}
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

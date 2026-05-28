@@ -6,6 +6,8 @@ import { getCategoryOfSeller, updateCategory } from '../../../api/category/categ
 import { showError, showSuccess, showWarning } from '../../../untils/ShowToast';
 import { useGetDetailCategoryQuery } from '../../../api/category/category.query';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
 
 export default function CategoryEdit() {
     const { id } = useParams();
@@ -127,23 +129,29 @@ export default function CategoryEdit() {
     const isReady = !isLoading && isOptionsLoaded && initialValues;
 
     return (
-        <div>
-            <h2 style={{ marginBottom: 16 }}>Cập nhật danh mục</h2>
-            {isReady ? (
-                <DynamicForm
-                    formRef={formRef}
-                    fields={fields}
-                    initialValues={initialValues}
-                    onSubmit={handleSubmit}
-                    submitText="Cập nhật"
-                    isEdit
-                    loading={loadingSubmit}
-                />
-            ) : (
-                <Flex justify="center" style={{ marginTop: '5%' }}>
-                    <LoadingDefault />
-                </Flex>
-            )}
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Cập nhật danh mục"
+                eyebrow="Danh mục"
+                breadcrumbs={[{ title: 'Seller' }, { title: 'Danh mục' }, { title: 'Chỉnh sửa' }]}
+                backTo="/seller/category"
+            >
+                {isReady ? (
+                    <DynamicForm
+                        formRef={formRef}
+                        fields={fields}
+                        initialValues={initialValues}
+                        onSubmit={handleSubmit}
+                        submitText="Cập nhật"
+                        isEdit
+                        loading={loadingSubmit}
+                    />
+                ) : (
+                    <Flex justify="center" style={{ marginTop: '5%' }}>
+                        <LoadingDefault />
+                    </Flex>
+                )}
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

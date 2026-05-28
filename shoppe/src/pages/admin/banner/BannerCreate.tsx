@@ -4,6 +4,8 @@ import { RegisterbyAdmin } from '../../../api/auth.api';
 import { showError, showSuccess } from '../../../untils/ShowToast';
 import { useNavigate } from 'react-router-dom';
 import { createBanner } from '../../../api/banner/banner.api';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
 
 export default function BannerCreate() {
     const formRef = useRef<any>(null); // ✅ khai báo đúng kiểu có thể null ban đầu
@@ -18,9 +20,9 @@ export default function BannerCreate() {
         },
         {
             name: 'linkTo',
-            label: 'Liên kết',
+            label: 'Liên kết (vd: /user/products, để trống = không click)',
             type: 'text',
-            rules: []
+            rules: [],
         },
         {
             name: 'type',
@@ -73,9 +75,15 @@ export default function BannerCreate() {
     };
 
     return (
-        <div>
-            <h2>Thêm Banner</h2>
-            <DynamicForm fields={fields} onSubmit={handleSubmit} formRef={formRef} />
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Thêm banner"
+                eyebrow="Banner"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Banner' }, { title: 'Thêm mới' }]}
+                backTo="/admin/banner"
+            >
+                <DynamicForm fields={fields} onSubmit={handleSubmit} formRef={formRef} />
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

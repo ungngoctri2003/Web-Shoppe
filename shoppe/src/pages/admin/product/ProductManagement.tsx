@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { deleteProduct, getAllProduct } from '../../../api/product/product.api';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
 import { debounce } from 'lodash';
-import Search from 'antd/es/input/Search';
-import PageHeader from '../../../components/ui/PageHeader';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import ManagementPageShell from '../../../components/backoffice/ManagementPageShell';
 
 interface Product {
     id: string; // tương đương Id
@@ -181,36 +181,33 @@ export default function ProductManagement() {
     };
 
     return (
-        <div>
-            <PageHeader
+        <BackOfficePage>
+            <ManagementPageShell
                 title="Quản lý sản phẩm"
+                subtitle="Tất cả sản phẩm trên nền tảng"
                 breadcrumbs={[{ title: 'Admin' }, { title: 'Sản phẩm' }]}
-                extra={
-                    <Search
-                        placeholder="Tìm kiếm theo tên, danh mục..."
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        style={{ width: 280 }}
-                        allowClear
+                search={{
+                    placeholder: 'Tìm kiếm theo tên, danh mục...',
+                    value: keyword,
+                    onChange: setKeyword,
+                }}
+            >
+                {loading ? (
+                    <LoadingDefault />
+                ) : (
+                    <CustomTable<Product>
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={data}
+                        pageSize={pageSize}
+                        currentPage={currentPage}
+                        total={total}
+                        onPageChange={handlePageChange}
+                        onDelete={handleDelete}
+                        title=""
                     />
-                }
-            />
-            {loading ? (
-                <LoadingDefault />
-            ) : (
-                <CustomTable<Product>
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={data}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    total={total}
-                    // scrollY={window.innerHeight - 300}
-                    onPageChange={handlePageChange}
-                    // onAdd={handleAdd}
-                    // onView={handleView}
-                    onDelete={handleDelete}
-                />)}
-        </div>
+                )}
+            </ManagementPageShell>
+        </BackOfficePage>
     );
 }

@@ -7,6 +7,8 @@ import { showError, showSuccess } from '../../../untils/ShowToast';
 import { useGetBannerDetailtQuery } from '../../../api/banner/banner.query';
 import { updateBanner } from '../../../api/banner/banner.api';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import FormPageShell from '../../../components/backoffice/FormPageShell';
 
 export default function BannerEdit() {
     const { id } = useParams();
@@ -108,23 +110,29 @@ export default function BannerEdit() {
     };
 
     return (
-        <div>
-            <h2 style={{ marginBottom: 16 }}>Cập nhật Banner</h2>
-            {!isLoading ? (
-                <DynamicForm
-                    formRef={formRef}
-                    fields={fields}
-                    initialValues={initialValues}
-                    onSubmit={handleSubmit}
-                    submitText="Cập nhật"
-                    isEdit
-                    loading={loadingSubmit}
-                />
-            ) : (
-                <Flex justify="center" style={{ marginTop: '5%' }}>
-                    <LoadingDefault />
-                </Flex>
-            )}
-        </div>
+        <BackOfficePage narrow>
+            <FormPageShell
+                title="Cập nhật banner"
+                eyebrow="Banner"
+                breadcrumbs={[{ title: 'Admin' }, { title: 'Banner' }, { title: 'Chỉnh sửa' }]}
+                backTo="/admin/banner"
+            >
+                {!isLoading ? (
+                    <DynamicForm
+                        formRef={formRef}
+                        fields={fields}
+                        initialValues={initialValues}
+                        onSubmit={handleSubmit}
+                        submitText="Cập nhật"
+                        isEdit
+                        loading={loadingSubmit}
+                    />
+                ) : (
+                    <Flex justify="center" style={{ marginTop: '5%' }}>
+                        <LoadingDefault />
+                    </Flex>
+                )}
+            </FormPageShell>
+        </BackOfficePage>
     );
 }

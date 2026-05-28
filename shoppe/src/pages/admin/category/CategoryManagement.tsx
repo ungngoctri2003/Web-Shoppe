@@ -6,8 +6,8 @@ import { showError, showSuccess } from '../../../untils/ShowToast';
 import { deleteCategory, getAllCategories } from '../../../api/category/category.api';
 import LoadingDefault from '../../../components/loading/LoadingDefault';
 import { debounce } from 'lodash';
-import Search from 'antd/es/input/Search';
-import PageHeader from '../../../components/ui/PageHeader';
+import BackOfficePage from '../../../components/backoffice/BackOfficePage';
+import ManagementPageShell from '../../../components/backoffice/ManagementPageShell';
 
 interface Category {
     id: string;
@@ -124,37 +124,34 @@ export default function CategoryManagement() {
 
 
     return (
-        <div>
-            <PageHeader
+        <BackOfficePage>
+            <ManagementPageShell
                 title="Quản lý danh mục"
+                subtitle="Danh mục sản phẩm hệ thống"
                 breadcrumbs={[{ title: 'Admin' }, { title: 'Danh mục' }]}
-                extra={
-                    <Search
-                        placeholder="Tìm kiếm danh mục..."
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        style={{ width: 280 }}
-                        allowClear
+                search={{
+                    placeholder: 'Tìm kiếm danh mục...',
+                    value: keyword,
+                    onChange: setKeyword,
+                }}
+            >
+                {loading ? (
+                    <LoadingDefault />
+                ) : (
+                    <CustomTable<Category>
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={data}
+                        pageSize={pageSize}
+                        currentPage={currentPage}
+                        total={total}
+                        scrollY={window.innerHeight - 300}
+                        onPageChange={handlePageChange}
+                        onDelete={handleDelete}
+                        title=""
                     />
-                }
-            />
-            {loading ? (
-                <LoadingDefault />
-            ) : (
-                <CustomTable<Category>
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={data}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    total={total}
-                    scrollY={window.innerHeight - 300}
-                    onPageChange={handlePageChange}
-
-                    onDelete={handleDelete}
-                />
-            )}
-
-        </div>
+                )}
+            </ManagementPageShell>
+        </BackOfficePage>
     );
 }

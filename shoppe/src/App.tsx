@@ -6,9 +6,8 @@ import { showError, showWarning } from "./untils/ShowToast";
 import { setUserState } from "./features/slices/user.slice";
 import { setAppState } from "./features/slices/app.slice";
 import AppRoutes from "./routes/AppRoutes";
-import { getUserCartItems } from "./api/cartitem/cartitem.api";
-import { setCart } from "./features/slices/cart.slice";
 import { ROLE } from "./constants";
+import { fetchServerCart, loadCartForSession } from "./services/cartSync";
 
 function App() {
   const dispatch = useDispatch();
@@ -26,7 +25,7 @@ function App() {
           })
         );
         if (res?.data?.role === ROLE.USER) {
-          fetchCart();
+          fetchServerCart(dispatch);
         }
       } else {
         showWarning(res?.message || "Đăng nhập thất bại");
@@ -36,25 +35,11 @@ function App() {
     }
   };
 
-  const fetchCart = async () => {
-    try {
-      const body = {
-        pageInfo: {
-          page: 1,
-          pageSize: 5
-        },
-        keyWord: ""
-      }
-      const res: any = await getUserCartItems(body);
-      dispatch(setCart(res));
-    } catch (error) {
-      console.error("Failed to fetch cart items:", error);
-    }
-  }
   useEffect(() => {
     if (token) {
       fetchUserInfo();
-
+    } else {
+      loadCartForSession(dispatch, null);
     }
   }, [token]);
   return (
