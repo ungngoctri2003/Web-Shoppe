@@ -35,26 +35,22 @@ namespace ProductAPI.Helpers
         /// </summary>
         public string CreateRequestUrl(string baseUrl, string vnp_HashSecret)
         {
-            StringBuilder data = new StringBuilder();
+            var query = new StringBuilder();
             foreach (KeyValuePair<string, string> kv in _requestData)
             {
-                if (!String.IsNullOrEmpty(kv.Value))
+                if (!string.IsNullOrEmpty(kv.Value))
                 {
-                    data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");
+                    query.Append(Uri.EscapeDataString(kv.Key));
+                    query.Append('=');
+                    query.Append(Uri.EscapeDataString(kv.Value));
+                    query.Append('&');
                 }
             }
-            string queryString = data.ToString();
 
-            baseUrl += "?" + queryString;
-            String signData = queryString;
-            if (signData.Length > 0)
-            {
-                signData = signData.Remove(data.Length - 1, 1);
-            }
-            string vnp_SecureHash = HashHmacSHA512(vnp_HashSecret, signData);
-            baseUrl += "vnp_SecureHash=" + vnp_SecureHash;
+            var queryString = query.ToString().TrimEnd('&');
+            var vnp_SecureHash = HashHmacSHA512(vnp_HashSecret, queryString);
 
-            return baseUrl;
+            return $"{baseUrl}?{queryString}&vnp_SecureHash={vnp_SecureHash}";
         }
         public bool ValidateSignature(string inputHash, string secretKey)
         {
@@ -101,17 +97,17 @@ namespace ProductAPI.Helpers
                 }
             }
 
-            string secureHash = _responseData["vnp_SecureHash"];
+            if (!_responseData.TryGetValue("vnp_SecureHash", out var secureHash))
+                return false;
+
             _responseData.Remove("vnp_SecureHash");
             _responseData.Remove("vnp_SecureHashType");
 
-            string rawData = string.Join("&", _responseData
-                .OrderBy(k => k.Key)
-                .Select(k => $"{k.Key}={k.Value}"));
+            var signData = string.Join("&", _responseData
+                .Select(kv => $"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(kv.Value)}"));
 
-            bool checkSignature = ValidateSignature(secureHash, vnp_HashSecret);
-
-            return checkSignature;
+            var myChecksum = HashHmacSHA512(vnp_HashSecret, signData);
+            return myChecksum.Equals(secureHash, StringComparison.InvariantCultureIgnoreCase);
         }
 
 

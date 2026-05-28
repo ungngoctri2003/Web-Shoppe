@@ -106,7 +106,7 @@ namespace ProductAPI.Services
             var vnp_ReturnUrl = _config["VNPay:ReturnUrl"];
             var vnp_Url = _config["VNPay:BaseUrl"];
             var vnp_TmnCode = _config["VNPay:TmnCode"];
-            var vnp_HashSecret = _config["VnPay:HashSecret"];
+            var vnp_HashSecret = _config["VNPay:HashSecret"];
 
             var vnpay = new VnPayLibrary();
             var random = new Random();
@@ -151,7 +151,7 @@ namespace ProductAPI.Services
 
         public async Task<(bool Success, string ResponseCode, string Message)> HandleVnPayReturnAsync(IQueryCollection query)
         {
-            var vnp_HashSecret = _config["VnPay:HashSecret"];
+            var vnp_HashSecret = _config["VNPay:HashSecret"];
             var vnpay = new VnPayLibrary();
 
             bool check = vnpay.GetResponseData(query, vnp_HashSecret);
