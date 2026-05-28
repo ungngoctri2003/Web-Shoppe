@@ -106,7 +106,7 @@ namespace ProductAPI.Services
             var vnp_ReturnUrl = _config["VNPay:ReturnUrl"];
             var vnp_Url = _config["VNPay:BaseUrl"];
             var vnp_TmnCode = _config["VNPay:TmnCode"];
-            var vnp_HashSecret = _config["VNPay:HashSecret"];
+            var vnp_HashSecret = _config["VnPay:HashSecret"];
 
             var vnpay = new VnPayLibrary();
             var random = new Random();
